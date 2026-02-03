@@ -5,7 +5,14 @@ const title = "A Backend Developer who turns ideas into reliable, production-rea
 const scrollToSection = (href: string) => {
   const element = document.querySelector(href)
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+    const navbarHeight = 80
+    const elementPosition = element.getBoundingClientRect().top + window.scrollY
+    const offsetPosition = elementPosition - navbarHeight
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
   }
 }
 

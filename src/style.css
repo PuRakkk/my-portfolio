@@ -5,10 +5,12 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 80px;
   }
 
   body {
     @apply antialiased;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

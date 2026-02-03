@@ -34,7 +34,14 @@ const handleScroll = () => {
 const scrollToSection = (href: string) => {
   const element = document.querySelector(href)
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+    const navbarHeight = 80
+    const elementPosition = element.getBoundingClientRect().top + window.scrollY
+    const offsetPosition = elementPosition - navbarHeight
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
   }
   activeLink.value = href
   isMobileMenuOpen.value = false

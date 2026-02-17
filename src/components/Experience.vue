@@ -11,7 +11,7 @@ const experiences: Experience[] = [
   {
     id: 1,
     company: 'Freelancer',
-    role: 'Full-Stack Developer',
+    role: 'Backend Developer',
     period: '2025 - Present',
     responsibilities: [
       'Building web applications for clients',
@@ -27,7 +27,7 @@ const experiences: Experience[] = [
     role: 'Backend Developer',
     period: '2024 - 2025',
     responsibilities: [
-      'Worked as a Full-Stack Developer using DRF and Vue.js',
+      'Worked as a Backend Developer using DRF to integrate with Vue.js',
       'Developed dashboard using Vue.js',
       'Developed Telegram bots with Django and FastAPI',
       'Integrated local payment gateways for QR transactions',

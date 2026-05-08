@@ -8,19 +8,18 @@ interface Skill {
 }
 
 const skills: Skill[] = [
-  { name: 'Vue.js', image: 'vue', level: 90, category: 'Frontend' },
-  { name: 'TypeScript', image: 'typescript', level: 85, category: 'Frontend' },
-  { name: 'Tailwind CSS', image: 'tailwind', level: 95, category: 'Frontend' },
-  { name: 'Django', image: 'django', level: 85, category: 'Backend' },
-  { name: 'Django Rest Framework', image: 'drf', level: 75, category: 'Backend' },
-  { name: 'FastAPI', image: 'fastapi', level: 75, category: 'Backend' },
-  { name: 'PostgreSQL', image: 'postgresql', level: 80, category: 'Backend' },
-  { name: 'Postman', image: 'postman', level: 90, category: 'DevOps' },
-  { name: 'Git', image: 'git', level: 90, category: 'DevOps' },
-  { name: 'Linux', image: 'linux', level: 80, category: 'DevOps' },
+  { name: 'Python', image: 'python', level: 90, category: 'Backend' },
+  { name: 'Django and DRF', image: 'django', level: 85, category: 'Backend' },
+  { name: 'FastAPI', image: 'fastapi', level: 80, category: 'Backend' },
+  { name: 'PostgreSQL, SQLModel, SQLAlchemy', image: 'postgresql', level: 80, category: 'Backend' },
+  { name: 'HTML, CSS and JavaScript', icon: 'JS', level: 80, category: 'Frontend' },
+  { name: 'Vue.js and Tailwind CSS', image: 'vue', level: 85, category: 'Frontend' },
+  { name: 'Linux Server', image: 'linux', level: 80, category: 'DevOps' },
+  { name: 'Git, GitHub, CI/CD', image: 'git', level: 85, category: 'DevOps' },
+  { name: 'LLM Integration', icon: 'AI', level: 80, category: 'AI' },
 ]
 
-const categories = ['Backend', 'Frontend', 'DevOps']
+const categories = ['Backend', 'Frontend', 'DevOps', 'AI']
 </script>
 
 <template>
@@ -62,7 +61,17 @@ const categories = ['Backend', 'Frontend', 'DevOps']
             >
               <div class="flex items-center mb-4">
                 <div
-                  v-if="skill.image === 'vue'"
+                  v-if="skill.image === 'python'"
+                  class="w-10 h-10 rounded-full bg-dark-700 border border-gold-400/20 flex items-center justify-center mr-3 flex-shrink-0"
+                >
+                  <img
+                    src="@/assets/images/python.png"
+                    :alt="skill.name"
+                    class="w-6 h-6 object-contain"
+                  />
+                </div>
+                <div
+                  v-else-if="skill.image === 'vue'"
                   class="w-10 h-10 rounded-full bg-dark-700 border border-gold-400/20 flex items-center justify-center mr-3"
                 >
                   <img
@@ -161,7 +170,12 @@ const categories = ['Backend', 'Frontend', 'DevOps']
                     class="w-6 h-6 object-contain"
                   />
                 </div>
-                <span v-else class="text-3xl mr-3">{{ skill.icon }}</span>
+                <span
+                  v-else
+                  class="w-10 h-10 rounded-full bg-dark-700 border border-gold-400/20 flex items-center justify-center mr-3 flex-shrink-0 text-sm font-semibold text-gold-400"
+                >
+                  {{ skill.icon }}
+                </span>
                 <span class="text-white font-medium">{{ skill.name }}</span>
               </div>
               <div class="relative">

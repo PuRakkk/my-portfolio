@@ -4,7 +4,11 @@ interface Experience {
   company: string
   role: string
   period: string
-  responsibilities: string[]
+  responsibilities?: string[]
+  projects?: {
+    name: string
+    responsibilities: string[]
+  }[]
 }
 
 const experiences: Experience[] = [
@@ -13,12 +17,26 @@ const experiences: Experience[] = [
     company: 'Freelancer',
     role: 'Backend Developer',
     period: '2025 - Present',
-    responsibilities: [
-      'Building web applications for clients',
-      'Developed Cainvite - an online platform for selling modern wedding invitation templates',
-      'Creating full-stack solutions using Django, DRF, and Vue.js',
-      'Designing and managing PostgreSQL databases',
-      'Providing ongoing maintenance and support for client projects',
+    projects: [
+      {
+        name: 'Telegram Bot with RAG',
+        responsibilities: [
+          'Built a multi-company AI Telegram bot platform with multimodal support, LLM fallback orchestration, and human-agent takeover workflows',
+          'Developed AI chatbot workflows for customer support, product recommendations, and FAQ handling',
+          'Integrated multiple LLM providers, including OpenAI, DeepSeek, and Gemini, with provider routing and fallback logic',
+          'Built progressive Telegram response streaming with safe stream ownership, cancellation handling, and improved message stability',
+          'Enhanced the admin dashboard with internal data management and chat visibility features',
+        ],
+      },
+      {
+        name: 'CaInvite',
+        responsibilities: [
+          'Built CaInvite, a platform for selling wedding invitation templates',
+          'Developed custom web applications for clients',
+          'Built full-stack solutions with Django, DRF, FastAPI, and Vue.js',
+          'Designed and maintained PostgreSQL databases',
+        ],
+      },
     ],
   },
   {
@@ -119,7 +137,7 @@ const experiences: Experience[] = [
                 </div>
 
                 <!-- Responsibilities -->
-                <ul class="space-y-2">
+                <ul v-if="exp.responsibilities" class="space-y-2">
                   <li
                     v-for="(resp, respIndex) in exp.responsibilities"
                     :key="respIndex"
@@ -131,6 +149,30 @@ const experiences: Experience[] = [
                     {{ resp }}
                   </li>
                 </ul>
+
+                <!-- Project groups -->
+                <div v-if="exp.projects" class="space-y-5">
+                  <div
+                    v-for="project in exp.projects"
+                    :key="project.name"
+                  >
+                    <h4 class="text-sm font-semibold text-white mb-2">
+                      Project: {{ project.name }}
+                    </h4>
+                    <ul class="space-y-2">
+                      <li
+                        v-for="(resp, respIndex) in project.responsibilities"
+                        :key="respIndex"
+                        class="flex items-start text-gray-400 text-sm"
+                      >
+                        <svg class="w-4 h-4 text-gold-400 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        {{ resp }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -2,19 +2,23 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const stats = [
-  { label: 'Years Experience', value: '1+' },
+  { label: 'Years Experience', value: '2+' },
   { label: 'Projects Completed', value: '10+' },
   { label: 'Happy Clients', value: '5+' },
 ]
 
 const highlights = [
-  'Building scalable REST APIs and microservices',
+  'Building AI-powered Telegram bots and RAG workflows',
+  'Integrating LLM providers with routing and fallback logic',
+  'Building scalable REST APIs and backend services',
   'Database design and optimization with PostgreSQL',
-  'Server deployment and DevOps with Linux/Ubuntu',
-  'Clean architecture and maintainable code',
+  'Server deployment and production support with Linux/Ubuntu',
 ]
 
 const technologies = [
+  { name: 'Telegram Bot', category: 'Bot Platform' },
+  { name: 'RAG', category: 'AI Workflow' },
+  { name: 'LLM Integration', category: 'AI Workflow' },
   { name: 'Django', category: 'Framework' },
   { name: 'DRF', category: 'Framework' },
   { name: 'FastAPI', category: 'Framework' },
@@ -169,16 +173,17 @@ onUnmounted(() => {
           <h3 class="text-2xl font-semibold text-white mb-2">
             I'm <span class="text-gold-400">Chon Sarak</span>,
           </h3>
-          <h4 class="text-xl text-gray-400 mb-6">a Backend Developer based in Cambodia</h4>
+          <h4 class="text-xl text-gray-400 mb-6">a Backend Developer building AI-powered systems in Cambodia</h4>
           <p class="text-gray-400 mb-6 leading-relaxed">
-            I'm a backend developer specializing in building robust, scalable server-side applications
-            and APIs. With expertise in Django and FastAPI, I focus on creating efficient systems
-            that power modern web applications.
+            I'm a backend developer specializing in scalable APIs, Telegram bot platforms, and
+            AI-assisted workflows. My recent work includes a multi-company Telegram bot with RAG,
+            multimodal support, LLM provider routing, fallback orchestration, and human-agent
+            takeover flows.
           </p>
           <p class="text-gray-400 mb-8 leading-relaxed">
-            My approach combines clean architecture principles with performance optimization,
-            ensuring that every system I build is maintainable, secure, and ready for production.
-            I'm passionate about database design, API development, and server infrastructure.
+            I work across Django, DRF, FastAPI, Vue.js, and PostgreSQL to turn client requirements
+            into production-ready systems. I care about clean architecture, stable streaming
+            responses, reliable data management, and maintainable deployments on Linux servers.
           </p>
 
           <!-- Highlights -->

@@ -18,7 +18,15 @@ const projects: Project[] = [
     tags: ['Django', 'DRF', 'PostgreSQL', 'Vue.js'],
     liveUrl: 'https://cainvite.com',
     githubUrl: '#',
-  }
+  },
+  {
+    id: 2,
+    title: 'Telegram RAG Assistant Bot',
+    description: 'A Telegram-based LLM portfolio assistant built from my Telegram bot with RAG project. The bot demonstrates retrieval-augmented AI chat, portfolio Q&A, and LLM-powered responses directly inside Telegram.',
+    image: 'chon-sarak',
+    tags: ['Telegram Bot', 'RAG', 'LLM', 'FastAPI'],
+    liveUrl: 'https://t.me/sarak_assistant_bot',
+  },
 ]
 </script>
 
@@ -55,12 +63,26 @@ const projects: Project[] = [
         >
           <div class="h-48 bg-gradient-to-br from-dark-700 to-dark-800 flex items-center justify-center relative overflow-hidden">
             <div class="absolute inset-0 bg-gold-400/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <img
+            <div
               v-if="project.image === 'logo'"
-              src="@/assets/images/logo.webp"
-              :alt="project.title"
-              class="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300"
-            />
+              class="w-16 h-16 rounded-full overflow-hidden border border-gold-400/30 bg-dark-900 flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+            >
+              <img
+                src="@/assets/images/logo.webp"
+                :alt="project.title"
+                class="w-10 h-10 object-contain"
+              />
+            </div>
+            <div
+              v-else-if="project.image === 'chon-sarak'"
+              class="w-16 h-16 rounded-full overflow-hidden border border-gold-400/30 bg-dark-900 group-hover:scale-110 transition-transform duration-300"
+            >
+              <img
+                src="@/assets/images/chon-sarak.png"
+                :alt="project.title"
+                class="w-full h-full object-cover object-[50%_32%] scale-[1.45]"
+              />
+            </div>
             <span v-else class="text-7xl group-hover:scale-110 transition-transform duration-300">
               {{ project.image }}
             </span>
@@ -70,7 +92,7 @@ const projects: Project[] = [
             <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-gold-400 transition-colors">
               {{ project.title }}
             </h3>
-            <p class="text-gray-500 text-sm mb-4 line-clamp-2">
+            <p class="text-gray-500 text-sm mb-4">
               {{ project.description }}
             </p>
 

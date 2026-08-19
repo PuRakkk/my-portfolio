@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const name = "CHON SARAK"
-const title = "A Backend Developer who turns ideas into reliable, production-ready systems. Focused on performance, clean architecture, and scalable server-side solutions"
+const title = "A Full-Stack Developer who builds modern web applications and AI-powered systems. Focused on clean architecture, scalable backends, and responsive user experiences"
 
 const scrollToSection = (href: string) => {
   const element = document.querySelector(href)
@@ -16,7 +16,7 @@ const scrollToSection = (href: string) => {
   }
 }
 
-const stat = { value: '10+', label: 'Projects Completed' }
+const stat = { value: '4', label: 'Projects Completed' }
 
 const techStack = [
   { name: 'Django', color: '#092e20' },
@@ -32,54 +32,6 @@ const techStack = [
     id="home"
     class="min-h-screen flex items-center relative overflow-hidden"
   >
-    <!-- Dark Red & Gold Gradient Background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#1a0a0a] to-[#0d0805]"></div>
-
-    <!-- Animated Gradient Orbs -->
-    <div class="absolute inset-0 overflow-hidden">
-      <!-- Dark red orb - top right -->
-      <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-red-950/40 rounded-full blur-3xl animate-orb-float"></div>
-
-      <!-- Gold/amber orb - bottom left -->
-      <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-amber-900/20 rounded-full blur-3xl animate-orb-float-delayed"></div>
-
-      <!-- Subtle red accent - center right -->
-      <div class="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-rose-950/30 rounded-full blur-3xl animate-orb-pulse"></div>
-
-      <!-- Gold accent near image -->
-      <div class="absolute top-1/2 right-1/3 w-[250px] h-[250px] bg-gold-500/10 rounded-full blur-3xl animate-orb-float-slow"></div>
-    </div>
-
-    <!-- Subtle vignette overlay -->
-    <div class="absolute inset-0 bg-radial-vignette"></div>
-
-    <!-- Animated Slicing Lines -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <!-- Diagonal lines sweeping across -->
-      <div class="slice-line slice-line-1"></div>
-      <div class="slice-line slice-line-2"></div>
-      <div class="slice-line slice-line-3"></div>
-      <div class="slice-line slice-line-4"></div>
-      <div class="slice-line slice-line-5"></div>
-
-      <!-- Horizontal accent lines -->
-      <div class="h-line h-line-1"></div>
-      <div class="h-line h-line-2"></div>
-
-      <!-- Vertical accent lines -->
-      <div class="v-line v-line-1"></div>
-      <div class="v-line v-line-2"></div>
-    </div>
-
-    <!-- Floating particles - mix of gold and warm tones -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute top-20 left-10 w-2 h-2 bg-gold-400 rounded-full animate-float"></div>
-      <div class="absolute top-40 left-1/4 w-1 h-1 bg-amber-400/50 rounded-full animate-float-delayed"></div>
-      <div class="absolute bottom-40 left-20 w-1.5 h-1.5 bg-gold-400/30 rounded-full animate-float"></div>
-      <div class="absolute top-1/3 left-1/2 w-1 h-1 bg-red-400/20 rounded-full animate-float-delayed"></div>
-      <div class="absolute bottom-1/4 left-1/3 w-2 h-2 bg-amber-300/20 rounded-full animate-float"></div>
-    </div>
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
       <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-screen py-24 lg:py-20">
 
@@ -126,7 +78,7 @@ const techStack = [
                 <!-- Name badge -->
                 <div class="absolute bottom-3 left-3 right-3">
                   <div class="bg-dark-900/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gold-400/20">
-                    <p class="text-gold-400 text-xs font-medium text-center">Backend Developer</p>
+                    <p class="text-gold-400 text-xs font-medium text-center">Full-Stack Developer</p>
                   </div>
                 </div>
               </div>
@@ -266,7 +218,7 @@ const techStack = [
                 <!-- Name badge with glow -->
                 <div class="absolute bottom-4 left-4 right-4">
                   <div class="bg-dark-900/80 backdrop-blur-sm rounded-lg px-4 py-3 border border-gold-400/20 badge-glow">
-                    <p class="text-gold-400 text-sm font-medium">Backend Developer</p>
+                    <p class="text-gold-400 text-sm font-medium">Full-Stack Developer</p>
                   </div>
                 </div>
               </div>

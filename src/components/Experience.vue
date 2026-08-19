@@ -15,17 +15,32 @@ const experiences: Experience[] = [
   {
     id: 1,
     company: 'Freelancer',
-    role: 'Backend Developer',
+    role: 'Full-Stack Developer',
     period: '2025 - Present',
     projects: [
       {
-        name: 'Telegram Bot with RAG',
+        name: 'ChatEaver (AI Support & RAG Platform)',
         responsibilities: [
-          'Built a multi-company AI Telegram bot platform with multimodal support, LLM fallback orchestration, and human-agent takeover workflows',
-          'Developed AI chatbot workflows for customer support, product recommendations, and FAQ handling',
-          'Integrated multiple LLM providers, including OpenAI, DeepSeek, and Gemini, with provider routing and fallback logic',
-          'Built progressive Telegram response streaming with safe stream ownership, cancellation handling, and improved message stability',
-          'Enhanced the admin dashboard with internal data management and chat visibility features',
+          'Architected a multi-tenant AI customer support SaaS platform using FastAPI, Next.js, and PostgreSQL.',
+          'Engineered hierarchical RAG pipelines using LlamaIndex and pgvector for accurate document retrieval.',
+          'Built a 3-layer Agentic Intent Orchestrator with multi-LLM fallback across OpenAI, DeepSeek, and Gemini.',
+          'Developed real-time bidirectional chat streaming using WebSockets and SSE for website widgets and Telegram bots.',
+          'Designed workflows for live human support handoff, quote requests, and appointment/booking automation.',
+          'Built secure Server-to-Server (S2S) APIs',
+          'Integrated multimodal Voice AI (STT/TTS), Cloudflare R2 object storage, and Lemon Squeezy subscription billing.',
+          'Containerized and deployed the full-stack system on Linux using Docker Compose and Caddy with automatic SSL/TLS.',
+        ],
+      },
+      {
+        name: 'SportPro (RunBodia Events Platform)',
+        responsibilities: [
+          'Architected a full-stack running events and marathon ticketing platform using Django REST Framework, PostgreSQL, and Vue.js.',
+          'Integrated ACLEDA Bank KHQR payment gateway with idempotency tokens, secure redirections, and automated verification.',
+          'Engineered automated 30-minute bib number lock reservations and multi-tiered pricing (Early Bird, Regular, Late).',
+          'Implemented digital ticket generation with signed QR codes for race-day check-in and automated email invoice confirmations.',
+          'Built dynamic category and race kit package management (T-shirt sizing, timing chips, medals, and meal vouchers).',
+          'Developed post-event features including participant ranking leaderboards and high-resolution photo gallery uploads.',
+          'Customized an admin dashboard with Django Unfold for live payment tracking, capacity overrides, and operational CSV exports.',
         ],
       },
       {
@@ -79,19 +94,6 @@ const experiences: Experience[] = [
 
 <template>
   <section id="experience" class="py-20 lg:py-32 relative overflow-hidden">
-    <!-- Dark Red & Gold Gradient Background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#1a0a0a] to-[#0d0805]"></div>
-
-    <!-- Animated Gradient Orbs -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-40 -right-40 w-[400px] h-[400px] bg-red-950/30 rounded-full blur-3xl animate-orb-float"></div>
-      <div class="absolute -bottom-32 -left-32 w-[350px] h-[350px] bg-amber-900/20 rounded-full blur-3xl animate-orb-float-delayed"></div>
-      <div class="absolute top-1/2 right-1/4 w-[250px] h-[250px] bg-gold-500/10 rounded-full blur-3xl animate-orb-pulse"></div>
-    </div>
-
-    <!-- Subtle vignette overlay -->
-    <div class="absolute inset-0 bg-radial-vignette"></div>
-
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <p class="text-gold-400 text-sm font-medium tracking-wider uppercase mb-3">My Journey</p>

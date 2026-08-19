@@ -76,19 +76,6 @@ const socialLinks = [
 
 <template>
   <section id="contact" class="py-20 lg:py-32 relative overflow-hidden">
-    <!-- Dark Red & Gold Gradient Background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#1a0a0a] to-[#0d0805]"></div>
-
-    <!-- Animated Gradient Orbs -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-40 -left-40 w-[400px] h-[400px] bg-red-950/30 rounded-full blur-3xl animate-orb-float"></div>
-      <div class="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-amber-900/20 rounded-full blur-3xl animate-orb-float-delayed"></div>
-      <div class="absolute bottom-1/3 left-1/4 w-[250px] h-[250px] bg-gold-500/10 rounded-full blur-3xl animate-orb-pulse"></div>
-    </div>
-
-    <!-- Subtle vignette overlay -->
-    <div class="absolute inset-0 bg-radial-vignette"></div>
-
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <p class="text-gold-400 text-sm font-medium tracking-wider uppercase mb-3">Contact</p>
@@ -117,7 +104,18 @@ const socialLinks = [
               </div>
               <div>
                 <p class="text-sm text-gray-500">Email</p>
-                <p class="text-white">sarakchon11@gmail.com</p>
+                <a href="mailto:sarakchon11@gmail.com" class="text-white hover:text-gold-400 transition-colors">sarakchon11@gmail.com</a>
+              </div>
+            </div>
+            <div class="flex items-center text-gray-300">
+              <div class="w-12 h-12 bg-dark-700 rounded-lg flex items-center justify-center mr-4">
+                <svg class="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Phone / Telegram</p>
+                <a href="tel:+855973870816" class="text-white hover:text-gold-400 transition-colors">+097 387 0816 (Telegram)</a>
               </div>
             </div>
             <div class="flex items-center text-gray-300">

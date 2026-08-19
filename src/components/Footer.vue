@@ -5,7 +5,7 @@ const name = "Chon Sarak"
 const footerLinks = [
   { name: 'Home', href: '#home' },
   { name: 'About', href: '#about' },
-  { name: 'Portfolio', href: '#projects' },
+  { name: 'Projects', href: '#projects' },
   { name: 'Skills', href: '#skills' },
   { name: 'Contact', href: '#contact' },
 ]
@@ -19,7 +19,7 @@ const scrollToSection = (href: string) => {
 </script>
 
 <template>
-  <footer class="py-12 bg-dark-900 border-t border-dark-700">
+  <footer class="py-12 bg-dark-900/60 backdrop-blur-md border-t border-dark-700/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col items-center">
         <!-- Logo -->

@@ -9,14 +9,18 @@ interface Skill {
 
 const skills: Skill[] = [
   { name: 'Python', image: 'python', level: 90, category: 'Backend' },
+  { name: 'FastAPI', image: 'fastapi', level: 85, category: 'Backend' },
   { name: 'Django and DRF', image: 'django', level: 85, category: 'Backend' },
-  { name: 'FastAPI', image: 'fastapi', level: 80, category: 'Backend' },
-  { name: 'PostgreSQL, SQLModel, SQLAlchemy', image: 'postgresql', level: 80, category: 'Backend' },
+  { name: 'PostgreSQL, SQLModel, SQLAlchemy', image: 'postgresql', level: 85, category: 'Backend' },
+  { name: 'Payment Gateways (ACLEDA KHQR, Lemon Squeezy)', icon: 'PAY', level: 85, category: 'Backend' },
+  { name: 'WebSocket & Real-Time APIs', icon: 'WS', level: 85, category: 'Backend' },
+  { name: 'RAG Architecture & Agentic AI', icon: 'RAG', level: 85, category: 'AI' },
+  { name: 'LlamaIndex & pgvector', icon: 'IDX', level: 85, category: 'AI' },
+  { name: 'Multi-LLM (OpenAI, DeepSeek, Gemini)', icon: 'LLM', level: 85, category: 'AI' },
+  { name: 'Next.js, Vue.js & Tailwind CSS', image: 'vue', level: 85, category: 'Frontend' },
   { name: 'HTML, CSS and JavaScript', icon: 'JS', level: 80, category: 'Frontend' },
-  { name: 'Vue.js and Tailwind CSS', image: 'vue', level: 85, category: 'Frontend' },
-  { name: 'Linux Server', image: 'linux', level: 80, category: 'DevOps' },
+  { name: 'Linux Server, Docker, Caddy', image: 'linux', level: 85, category: 'DevOps' },
   { name: 'Git, GitHub, CI/CD', image: 'git', level: 85, category: 'DevOps' },
-  { name: 'LLM Integration', icon: 'AI', level: 80, category: 'AI' },
 ]
 
 const categories = ['Backend', 'Frontend', 'DevOps', 'AI']
@@ -24,19 +28,6 @@ const categories = ['Backend', 'Frontend', 'DevOps', 'AI']
 
 <template>
   <section id="skills" class="py-20 lg:py-32 relative overflow-hidden">
-    <!-- Dark Red & Gold Gradient Background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#1a0a0a] to-[#0d0805]"></div>
-
-    <!-- Animated Gradient Orbs -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-40 -left-40 w-[400px] h-[400px] bg-red-950/30 rounded-full blur-3xl animate-orb-float"></div>
-      <div class="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-amber-900/20 rounded-full blur-3xl animate-orb-float-delayed"></div>
-      <div class="absolute top-1/2 left-1/4 w-[250px] h-[250px] bg-gold-500/10 rounded-full blur-3xl animate-orb-pulse"></div>
-    </div>
-
-    <!-- Subtle vignette overlay -->
-    <div class="absolute inset-0 bg-radial-vignette"></div>
-
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <p class="text-gold-400 text-sm font-medium tracking-wider uppercase mb-3">What I Know</p>

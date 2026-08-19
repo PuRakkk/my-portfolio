@@ -3,28 +3,31 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const stats = [
   { label: 'Years Experience', value: '2+' },
-  { label: 'Projects Completed', value: '10+' },
+  { label: 'Projects Completed', value: '4' },
   { label: 'Happy Clients', value: '5+' },
 ]
 
 const highlights = [
-  'Building AI-powered Telegram bots and RAG workflows',
-  'Integrating LLM providers with routing and fallback logic',
-  'Building scalable REST APIs and backend services',
-  'Database design and optimization with PostgreSQL',
-  'Server deployment and production support with Linux/Ubuntu',
+  'Building multi-tenant AI platforms and RAG workflows',
+  'Agentic AI routing and multi-LLM fallback orchestration',
+  'Designing scalable REST APIs and real-time streaming',
+  'Integrating local bank payments (ACLEDA KHQR) & Lemon Squeezy',
+  'Vector search and database optimization with PostgreSQL & pgvector',
+  'Server deployment and production support with Linux, Docker, and Caddy',
 ]
 
 const technologies = [
+  { name: 'RAG & pgvector', category: 'AI Workflow' },
+  { name: 'LlamaIndex', category: 'AI Workflow' },
+  { name: 'Agentic AI & Multi-LLM', category: 'AI Workflow' },
+  { name: 'WebSockets & SSE', category: 'Real-Time' },
+  { name: 'ACLEDA KHQR', category: 'Payment' },
   { name: 'Telegram Bot', category: 'Bot Platform' },
-  { name: 'RAG', category: 'AI Workflow' },
-  { name: 'LLM Integration', category: 'AI Workflow' },
-  { name: 'Django', category: 'Framework' },
-  { name: 'DRF', category: 'Framework' },
   { name: 'FastAPI', category: 'Framework' },
+  { name: 'Django & DRF', category: 'Framework' },
   { name: 'PostgreSQL', category: 'Database' },
-  { name: 'MySQL', category: 'Database' },
-  { name: 'Linux Server', category: 'Server' },
+  { name: 'Next.js & Vue.js', category: 'Frontend' },
+  { name: 'Docker & Linux', category: 'DevOps' },
 ]
 
 // Image slideshow
@@ -54,30 +57,6 @@ onUnmounted(() => {
 
 <template>
   <section id="about" class="py-20 lg:py-32 relative overflow-hidden">
-    <!-- Dark Red & Gold Gradient Background (same as Hero) -->
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#1a0a0a] to-[#0d0805]"></div>
-
-    <!-- Animated Gradient Orbs -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-40 -left-40 w-[400px] h-[400px] bg-red-950/30 rounded-full blur-3xl animate-orb-float"></div>
-      <div class="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-amber-900/15 rounded-full blur-3xl animate-orb-float-delayed"></div>
-      <div class="absolute top-1/2 left-1/4 w-[250px] h-[250px] bg-rose-950/20 rounded-full blur-3xl animate-orb-pulse"></div>
-    </div>
-
-    <!-- Subtle vignette overlay -->
-    <div class="absolute inset-0 bg-radial-vignette"></div>
-
-    <!-- Animated Slicing Lines -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="slice-line slice-line-1"></div>
-      <div class="slice-line slice-line-2"></div>
-      <div class="slice-line slice-line-3"></div>
-      <div class="h-line h-line-1"></div>
-      <div class="h-line h-line-2"></div>
-      <div class="v-line v-line-1"></div>
-      <div class="v-line v-line-2"></div>
-    </div>
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="text-center mb-16">
         <p class="text-gold-400 text-sm font-medium tracking-wider uppercase mb-3">About Me</p>
@@ -173,17 +152,16 @@ onUnmounted(() => {
           <h3 class="text-2xl font-semibold text-white mb-2">
             I'm <span class="text-gold-400">Chon Sarak</span>,
           </h3>
-          <h4 class="text-xl text-gray-400 mb-6">a Backend Developer building AI-powered systems in Cambodia</h4>
+          <h4 class="text-xl text-gray-400 mb-6">a Full-Stack Developer building AI-powered systems in Cambodia</h4>
           <p class="text-gray-400 mb-6 leading-relaxed">
-            I'm a backend developer specializing in scalable APIs, Telegram bot platforms, and
-            AI-assisted workflows. My recent work includes a multi-company Telegram bot with RAG,
-            multimodal support, LLM provider routing, fallback orchestration, and human-agent
-            takeover flows.
+            I'm a full-stack developer specializing in scalable APIs, modern web frontends, and
+            AI-powered systems. My recent work includes ChatEaver, a multi-tenant RAG platform with
+            multi-LLM fallback, voice processing, and live human support handoff.
           </p>
           <p class="text-gray-400 mb-8 leading-relaxed">
-            I work across Django, DRF, FastAPI, Vue.js, and PostgreSQL to turn client requirements
-            into production-ready systems. I care about clean architecture, stable streaming
-            responses, reliable data management, and maintainable deployments on Linux servers.
+            I work across FastAPI, Django, PostgreSQL, Next.js, and Vue.js to build production-ready
+            systems. I care about clean architecture, stable streaming responses, reliable vector
+            search, and maintainable deployments on Linux servers.
           </p>
 
           <!-- Highlights -->
@@ -224,6 +202,27 @@ onUnmounted(() => {
                 {{ tech.name }}
               </span>
             </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a
+              href="/Chon_Sarak_CV.pdf"
+              target="_blank"
+              download="Chon_Sarak_FullStack_CV.pdf"
+              class="inline-flex items-center px-6 py-3 bg-gold-500 hover:bg-gold-400 text-dark-900 font-semibold rounded-full transition-all duration-300 shadow-lg shadow-gold-500/10 gap-2 text-sm"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Download CV
+            </a>
+            <a
+              href="#contact"
+              class="inline-flex items-center px-6 py-3 border border-gold-400/50 hover:border-gold-400 text-gold-400 hover:bg-gold-400/10 font-semibold rounded-full transition-all duration-300 text-sm"
+            >
+              Get In Touch
+            </a>
           </div>
         </div>
       </div>

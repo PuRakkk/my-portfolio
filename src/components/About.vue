@@ -8,11 +8,11 @@ const stats = [
 ]
 
 const highlights = [
-  'Building multi-tenant AI platforms and RAG workflows',
-  'Agentic AI routing and multi-LLM fallback orchestration',
-  'Designing scalable REST APIs and real-time streaming',
-  'Integrating local bank payments (ACLEDA KHQR) & Lemon Squeezy',
-  'Vector search and database optimization with PostgreSQL & pgvector',
+  'Crafting responsive, modern user interfaces with Next.js, Vue.js, and Tailwind CSS',
+  'Designing scalable REST APIs and real-time streaming architectures',
+  'Building multi-tenant AI platforms with agentic routing, RAG, and multi-LLM fallbacks',
+  'Integrating local bank payments (ACLEDA, ABA PAYWAY, KHQR) & Lemon Squeezy',
+  'Database design, query optimization, and vector search with PostgreSQL & pgvector',
   'Server deployment and production support with Linux, Docker, and Caddy',
 ]
 
@@ -152,16 +152,17 @@ onUnmounted(() => {
           <h3 class="text-2xl font-semibold text-white mb-2">
             I'm <span class="text-gold-400">Chon Sarak</span>,
           </h3>
-          <h4 class="text-xl text-gray-400 mb-6">a Full-Stack Developer building AI-powered systems in Cambodia</h4>
+          <h4 class="text-xl text-gray-400 mb-6">a Full-Stack Developer building modern systems in Cambodia</h4>
           <p class="text-gray-400 mb-6 leading-relaxed">
             I'm a full-stack developer specializing in scalable APIs, modern web frontends, and
             AI-powered systems. My recent work includes ChatEaver, a multi-tenant RAG platform with
             multi-LLM fallback, voice processing, and live human support handoff.
           </p>
           <p class="text-gray-400 mb-8 leading-relaxed">
-            I work across FastAPI, Django, PostgreSQL, Next.js, and Vue.js to build production-ready
-            systems. I care about clean architecture, stable streaming responses, reliable vector
-            search, and maintainable deployments on Linux servers.
+            I work across FastAPI, Django, PostgreSQL, Next.js, and Vue.js to build responsive,
+            production-ready web applications and robust backend APIs. I focus on clean
+            architecture, performant database systems, maintainable Linux deployments, and
+            seamlessly integrating modern AI and RAG workflows.
           </p>
 
           <!-- Highlights -->
@@ -207,9 +208,9 @@ onUnmounted(() => {
           <!-- Action Buttons -->
           <div class="mt-8 flex flex-wrap gap-4">
             <a
-              href="/Chon_Sarak_CV.pdf"
+              href="/Chon_Sarak_FullStack_2026.pdf"
               target="_blank"
-              download="Chon_Sarak_FullStack_CV.pdf"
+              download="Chon_Sarak_FullStack_2026.pdf"
               class="inline-flex items-center px-6 py-3 bg-gold-500 hover:bg-gold-400 text-dark-900 font-semibold rounded-full transition-all duration-300 shadow-lg shadow-gold-500/10 gap-2 text-sm"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

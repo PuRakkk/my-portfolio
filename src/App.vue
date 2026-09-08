@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Hero from '@/components/Hero.vue'
 import About from '@/components/About.vue'
@@ -7,47 +8,52 @@ import Experience from '@/components/Experience.vue'
 import Projects from '@/components/Projects.vue'
 import Contact from '@/components/Contact.vue'
 import Footer from '@/components/Footer.vue'
+
+const showBackToTop = ref(false)
+
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 400
+}
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#0a0a0a] text-white relative selection:bg-gold-500/30 selection:text-gold-300">
-    <!-- Global Sticky/Fixed Animated Background -->
+  <div class="min-h-screen bg-[#0B0F19] text-slate-200 relative selection:bg-amber-500/30 selection:text-amber-200 font-sans">
+    <!-- Ambient Backdrop Architecture -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      <!-- Dark Red & Gold Gradient Background -->
-      <div class="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#1a0a0a] to-[#0d0805]"></div>
+      <!-- Deep Slate Navy Base -->
+      <div class="absolute inset-0 bg-[#0B0F19]"></div>
 
-      <!-- Animated Gradient Orbs -->
-      <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-red-950/40 rounded-full blur-3xl animate-orb-float"></div>
-      <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-amber-900/20 rounded-full blur-3xl animate-orb-float-delayed"></div>
-      <div class="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-rose-950/30 rounded-full blur-3xl animate-orb-pulse"></div>
-      <div class="absolute top-1/2 right-1/3 w-[250px] h-[250px] bg-gold-500/10 rounded-full blur-3xl animate-orb-float-slow"></div>
+      <!-- Fine Dot Grid Texture -->
+      <div class="absolute inset-0 bg-dot-grid opacity-35"></div>
 
-      <!-- Subtle vignette overlay -->
-      <div class="absolute inset-0 bg-radial-vignette"></div>
+      <!-- Soft Luminous Radial Glows (Slate Blue, Deep Indigo & Subtle Amber) -->
+      <div class="absolute -top-32 right-1/4 w-[650px] h-[650px] bg-blue-600/10 rounded-full blur-[150px] animate-pulse-glow"></div>
+      <div class="absolute top-1/3 -left-32 w-[550px] h-[550px] bg-indigo-600/10 rounded-full blur-[160px]"></div>
+      <div class="absolute bottom-1/4 right-[-100px] w-[600px] h-[600px] bg-amber-500/[0.07] rounded-full blur-[180px]"></div>
 
-      <!-- Animated Slicing Lines -->
-      <div class="slice-line slice-line-1"></div>
-      <div class="slice-line slice-line-2"></div>
-      <div class="slice-line slice-line-3"></div>
-      <div class="slice-line slice-line-4"></div>
-      <div class="slice-line slice-line-5"></div>
-      <div class="h-line h-line-1"></div>
-      <div class="h-line h-line-2"></div>
-      <div class="v-line v-line-1"></div>
-      <div class="v-line v-line-2"></div>
-
-      <!-- Floating particles - mix of gold and warm tones -->
-      <div class="absolute top-20 left-10 w-2 h-2 bg-gold-400 rounded-full animate-float"></div>
-      <div class="absolute top-40 left-1/4 w-1 h-1 bg-amber-400/50 rounded-full animate-float-delayed"></div>
-      <div class="absolute bottom-40 left-20 w-1.5 h-1.5 bg-gold-400/30 rounded-full animate-float"></div>
-      <div class="absolute top-1/3 left-1/2 w-1 h-1 bg-red-400/20 rounded-full animate-float-delayed"></div>
-      <div class="absolute bottom-1/4 left-1/3 w-2 h-2 bg-amber-300/20 rounded-full animate-float"></div>
+      <!-- Top Vignette Gradient -->
+      <div class="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#0B0F19]/90 to-transparent"></div>
     </div>
 
-    <!-- Page Content (Foreground) -->
-    <div class="relative z-10">
+    <!-- Foreground Content -->
+    <div class="relative z-10 flex flex-col min-h-screen">
       <Navbar />
-      <main>
+      <main class="flex-grow">
         <Hero />
         <About />
         <Skills />
@@ -57,5 +63,18 @@ import Footer from '@/components/Footer.vue'
       </main>
       <Footer />
     </div>
+
+    <!-- Floating Back-to-Top Button -->
+    <button
+      v-show="showBackToTop"
+      @click="scrollToTop"
+      aria-label="Back to top"
+      class="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-slate-900/80 border border-slate-700/80 text-slate-300 hover:text-amber-400 hover:border-amber-400/50 shadow-xl backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:-translate-y-1 group"
+    >
+      <svg class="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 15l7-7 7 7" />
+      </svg>
+    </button>
   </div>
 </template>
+

@@ -16,6 +16,8 @@ coverage
 .env
 .env.*
 .gemini/
+*_backup*
+
 
 # Editor directories and files
 .vscode/*

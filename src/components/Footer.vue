@@ -93,9 +93,8 @@ const scrollToSection = (href: string) => {
       </div>
 
       <!-- Copyright Bar -->
-      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <div class="pt-6 flex items-center justify-center text-center text-xs text-slate-500">
         <p>&copy; {{ currentYear }} {{ name }}. Built with precision in Phnom Penh, Cambodia.</p>
-        <p class="font-mono">Vue 3 • TypeScript • Tailwind CSS</p>
       </div>
     </div>
   </footer>

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import SectionHeading from '@/components/SectionHeading.vue'
+
 interface ExperienceItem {
   id: number
   company: string
@@ -9,10 +12,9 @@ interface ExperienceItem {
   highlights?: string[]
   projects?: {
     name: string
-    roleNote?: string
+    short: string
     responsibilities: string[]
   }[]
-  skills: string[]
 }
 
 const experiences: ExperienceItem[] = [
@@ -26,7 +28,7 @@ const experiences: ExperienceItem[] = [
     projects: [
       {
         name: 'ChatEaver (Enterprise AI Support Platform)',
-        roleNote: 'FastAPI • Next.js • LlamaIndex • pgvector • WebSockets',
+        short: 'ChatEaver',
         responsibilities: [
           'Architected a multi-tenant AI customer support SaaS platform handling automated knowledge base ingestion.',
           'Engineered hierarchical RAG pipelines using LlamaIndex and pgvector for semantic document retrieval.',
@@ -40,7 +42,7 @@ const experiences: ExperienceItem[] = [
       },
       {
         name: 'SportPro (RunBodia Events Platform)',
-        roleNote: 'Django DRF • PostgreSQL • Vue.js • ACLEDA KHQR',
+        short: 'SportPro',
         responsibilities: [
           'Architected a full-stack running events and marathon ticketing platform with high-concurrency race registrations.',
           'Integrated ACLEDA Bank KHQR payment gateway with idempotency tokens, secure redirects, and automated verification.',
@@ -51,14 +53,13 @@ const experiences: ExperienceItem[] = [
       },
       {
         name: 'CaInvite Platform',
-        roleNote: 'Django • DRF • PostgreSQL • Vue.js',
+        short: 'CaInvite',
         responsibilities: [
           'Developed CaInvite, an online commerce platform for digital wedding invitation templates.',
           'Designed scalable PostgreSQL schemas and RESTful backend APIs integrated with a responsive Vue.js frontend.'
         ],
       },
     ],
-    skills: ['FastAPI', 'Django DRF', 'PostgreSQL', 'LlamaIndex', 'pgvector', 'Vue.js', 'Next.js', 'Docker', 'Caddy', 'KHQR']
   },
   {
     id: 2,
@@ -76,7 +77,6 @@ const experiences: ExperienceItem[] = [
       'Built a desktop client application in Python for internal administrative operations.',
       'Maintained rigorous Git version control, branch reviews, and API documentation.'
     ],
-    skills: ['Python', 'FastAPI', 'Django & DRF', 'PostgreSQL', 'MySQL', 'Linux Administration', 'Telegram Bot API']
   },
   {
     id: 3,
@@ -91,129 +91,187 @@ const experiences: ExperienceItem[] = [
       'Conducted methodical system testing, bug reproduction, and regression verification on client retail software.',
       'Delivered rapid customer problem resolution and hardware troubleshooting under tight uptime SLAs.'
     ],
-    skills: ['System QA & Testing', 'Networking (LAN/WAN)', 'Hardware Diagnostics', 'Linux/Windows OS', 'Client Support']
   },
 ]
+
+// Accordion: the most recent role starts open; every point stays in the page, just tucked away
+const openIds = ref(new Set<number>([experiences[0]!.id]))
+const toggle = (id: number) => {
+  const next = new Set(openIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  openIds.value = next
+}
+
+// Project tabs inside a role (index of the selected project, per role)
+const activeProject = ref<Record<number, number>>({})
+// Projects the visitor has opened, so unseen ones can show a small "there's more" dot
+const visited = ref<Record<number, Set<number>>>({})
+
+const current = (exp: ExperienceItem) => activeProject.value[exp.id] ?? 0
+const isUnseen = (exp: ExperienceItem, pIdx: number) => pIdx !== 0 && !visited.value[exp.id]?.has(pIdx)
+
+const selectProject = (exp: ExperienceItem, pIdx: number) => {
+  activeProject.value[exp.id] = pIdx
+  visited.value[exp.id] = new Set([...(visited.value[exp.id] ?? []), pIdx])
+}
+
+// "Next project" loops back to the first after the last
+const nextProject = (exp: ExperienceItem) => {
+  const count = exp.projects?.length ?? 0
+  if (count) selectProject(exp, (current(exp) + 1) % count)
+}
+
+const pad = (value: number) => String(value).padStart(2, '0')
 </script>
 
 <template>
-  <section id="experience" class="py-20 lg:py-28 relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      
-      <!-- Section Header -->
-      <div v-reveal class="text-center max-w-2xl mx-auto mb-16">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300 text-xs font-mono font-medium tracking-wide mb-3">
-          <span>// CAREER & TIMELINE</span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
-          Professional Experience
-        </h2>
-        <p class="text-slate-400 text-base leading-relaxed">
-          A track record of engineering scalable backends, real-time APIs, and AI-driven platforms.
-        </p>
-      </div>
+  <section id="experience" class="py-20 sm:py-28 border-t border-line">
+    <div class="container-page">
+      <SectionHeading
+        index="03"
+        label="Experience"
+      />
 
-      <!-- Experience Timeline Stack -->
-      <div class="relative space-y-10 before:absolute before:inset-0 before:left-4 sm:before:left-8 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-amber-400 before:via-amber-500/30 before:to-transparent">
-        
-        <div
-          v-for="(exp, expIdx) in experiences"
-          :key="exp.id"
-          v-reveal="{ delay: expIdx * 120 }"
-          class="relative pl-10 sm:pl-16 group"
-        >
-          <!-- Timeline Node Icon -->
-          <div class="absolute left-2 sm:left-6 -translate-x-1/2 top-7 w-4 h-4 rounded-full bg-slate-900 border-2 border-amber-400 group-hover:bg-amber-400 group-hover:scale-125 transition-all duration-300 shadow-sm"></div>
+      <ol class="border-t border-line">
+        <li v-for="exp in experiences" :key="exp.id" v-reveal class="border-b border-line">
+          <!-- Row header: always visible, toggles the details -->
+          <button
+            type="button"
+            class="group w-full grid md:grid-cols-12 gap-1 md:gap-8 py-6 sm:py-8 text-left"
+            :aria-expanded="openIds.has(exp.id)"
+            :aria-controls="`exp-panel-${exp.id}`"
+            @click="toggle(exp.id)"
+          >
+            <div class="md:col-span-3 text-sm">
+              <p class="font-mono text-xs sm:text-sm text-fg">{{ exp.period }}</p>
+              <p class="hidden md:block mt-1 text-muted">{{ exp.type }}</p>
+              <p class="hidden md:block text-subtle">{{ exp.location }}</p>
+            </div>
 
-          <!-- Experience Card -->
-          <div class="rounded-3xl p-6 sm:p-8 bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 backdrop-blur-xl shadow-xl shadow-black/20 transition-all duration-300">
-            
-            <!-- Card Header -->
-            <div class="flex flex-wrap items-start justify-between gap-3 mb-6 pb-5 border-b border-slate-800/80">
+            <div class="md:col-span-9 flex items-start justify-between gap-4 mt-2 md:mt-0">
               <div>
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                  <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                    {{ exp.role }}
-                  </h3>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium">
-                  <span class="text-amber-400 font-semibold">{{ exp.company }}</span>
-                  <span class="text-slate-600">•</span>
-                  <span class="text-slate-400">{{ exp.location }}</span>
-                  <span class="text-slate-600">•</span>
-                  <span class="text-slate-400 font-mono">{{ exp.type }}</span>
-                </div>
+                <h3 class="text-lg sm:text-xl font-semibold tracking-tight text-fg">{{ exp.role }}</h3>
+                <p class="mt-1 text-sm sm:text-base text-muted">{{ exp.company }}</p>
+                <!-- Shown once the row is open, as a hint that there are several projects to browse -->
+                <span
+                  v-if="exp.projects && exp.projects.length > 1 && openIds.has(exp.id)"
+                  class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-accent/30 bg-accent/10 text-xs font-medium text-accent"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5" />
+                  </svg>
+                  {{ exp.projects.length }} projects inside
+                </span>
               </div>
 
-              <!-- Period Pill -->
-              <span class="px-3.5 py-1.5 rounded-full text-xs font-mono font-medium bg-amber-400/10 text-amber-300 border border-amber-400/20 shadow-xs">
-                {{ exp.period }}
-              </span>
-            </div>
-
-            <!-- Standalone Highlights -->
-            <ul v-if="exp.highlights" class="space-y-2.5 mb-6">
-              <li
-                v-for="(hl, hlIdx) in exp.highlights"
-                :key="hlIdx"
-                class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed"
-              >
-                <svg class="w-4 h-4 text-amber-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>{{ hl }}</span>
-              </li>
-            </ul>
-
-            <!-- Nested Projects (Freelance / Systems) -->
-            <div v-if="exp.projects" class="space-y-6 mb-6">
-              <div
-                v-for="proj in exp.projects"
-                :key="proj.name"
-                class="p-4 sm:p-5 rounded-2xl bg-slate-950/50 border border-slate-800/80"
-              >
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <h4 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                    {{ proj.name }}
-                  </h4>
-                  <span v-if="proj.roleNote" class="text-[11px] font-mono text-slate-400">
-                    {{ proj.roleNote }}
-                  </span>
-                </div>
-
-                <ul class="space-y-2">
-                  <li
-                    v-for="(resp, respIdx) in proj.responsibilities"
-                    :key="respIdx"
-                    class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed"
-                  >
-                    <svg class="w-3.5 h-3.5 text-amber-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span>{{ resp }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Tech Pills Footer -->
-            <div class="pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
-              <span class="text-[11px] font-mono text-slate-400 mr-1.5">Stack:</span>
+              <!-- Dropdown chevron: flips up when open -->
               <span
-                v-for="skill in exp.skills"
-                :key="skill"
-                class="px-2.5 py-1 rounded-md bg-slate-800/70 border border-slate-700/60 text-[11px] font-mono text-slate-300"
+                class="shrink-0 mt-1 w-8 h-8 rounded-full border border-line flex items-center justify-center text-muted transition-all duration-300 group-hover:border-fg group-hover:text-fg"
+                :class="{ 'rotate-180 !border-fg !text-fg': openIds.has(exp.id) }"
+                aria-hidden="true"
               >
-                {{ skill }}
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" />
+                </svg>
               </span>
             </div>
+          </button>
 
+          <!-- Details: grid-rows 0fr → 1fr animates to the content's natural height -->
+          <div
+            :id="`exp-panel-${exp.id}`"
+            class="grid transition-[grid-template-rows] duration-300 ease-out"
+            :class="openIds.has(exp.id) ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
+            :inert="!openIds.has(exp.id)"
+          >
+            <div class="overflow-hidden">
+              <div class="md:grid md:grid-cols-12 md:gap-8 pb-8 sm:pb-10">
+                <div class="md:col-span-9 md:col-start-4 max-w-3xl">
+                  <ul v-if="exp.highlights" class="space-y-2">
+                    <li v-for="item in exp.highlights" :key="item" class="dash-item">
+                      {{ item }}
+                    </li>
+                  </ul>
+
+                  <!-- Project tabs: one project's points at a time -->
+                  <div v-if="exp.projects">
+                    <div class="flex items-end justify-between gap-4 border-b border-line">
+                      <div class="flex gap-4 sm:gap-6" role="tablist">
+                        <button
+                          v-for="(project, pIdx) in exp.projects"
+                          :key="project.name"
+                          type="button"
+                          role="tab"
+                          :aria-selected="current(exp) === pIdx"
+                          class="relative -mb-px pb-2.5 inline-flex items-baseline gap-1.5 text-sm whitespace-nowrap border-b transition-colors"
+                          :class="current(exp) === pIdx ? 'text-fg border-fg' : 'text-muted border-transparent hover:text-fg'"
+                          @click="selectProject(exp, pIdx)"
+                        >
+                          <span class="font-mono text-[10px] text-subtle">{{ pad(pIdx + 1) }}</span>
+                          {{ project.short }}
+                          <!-- Unseen project: small pulsing dot -->
+                          <span v-if="isUnseen(exp, pIdx)" class="absolute -top-0.5 -right-2 flex w-1.5 h-1.5" aria-hidden="true">
+                            <span class="absolute inline-flex w-full h-full rounded-full bg-accent opacity-60 animate-ping"></span>
+                            <span class="relative inline-flex w-1.5 h-1.5 rounded-full bg-accent"></span>
+                          </span>
+                        </button>
+                      </div>
+                      <span class="hidden sm:inline pb-2.5 font-mono text-xs text-subtle">
+                        <span class="text-fg">{{ current(exp) + 1 }}</span> / {{ exp.projects.length }}
+                      </span>
+                    </div>
+
+                    <template v-for="(project, pIdx) in exp.projects" :key="project.name">
+                      <div v-if="current(exp) === pIdx" class="tab-panel pt-5" role="tabpanel">
+                        <h4 class="text-sm font-medium text-fg">{{ project.name }}</h4>
+                        <ul class="mt-3 space-y-2">
+                          <li v-for="item in project.responsibilities" :key="item" class="dash-item">
+                            {{ item }}
+                          </li>
+                        </ul>
+
+                        <!-- Next project: makes it obvious there is more to see -->
+                        <div class="mt-6 pt-4 border-t border-line flex items-center justify-between gap-4">
+                          <span class="font-mono text-xs text-subtle">Project {{ pIdx + 1 }} of {{ exp.projects.length }}</span>
+                          <button
+                            type="button"
+                            class="group/next inline-flex items-center gap-1.5 text-sm font-medium text-fg"
+                            @click="nextProject(exp)"
+                          >
+                            <span class="text-muted">{{ pIdx + 1 === exp.projects.length ? 'Back to' : 'Next:' }}</span>
+                            {{ exp.projects[(pIdx + 1) % exp.projects.length]!.short }}
+                            <svg class="w-4 h-4 transition-transform group-hover/next:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6l6 6-6 6" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-      </div>
-
+        </li>
+      </ol>
     </div>
   </section>
 </template>
+
+<style scoped>
+/* Quick fade when switching project tabs */
+.tab-panel {
+  animation: tab-in 200ms ease-out;
+}
+
+@keyframes tab-in {
+  from { opacity: 0; transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-panel {
+    animation: none;
+  }
+}
+</style>

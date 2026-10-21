@@ -1,413 +1,315 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SectionHeading from '@/components/SectionHeading.vue'
 
-interface TechItem {
+interface Skill {
   name: string
-  tag: string
-  image?: string
-  icon?: string
+  icon: string
 }
 
 interface DomainGroup {
   id: 'backend' | 'ai' | 'frontend' | 'devops'
   title: string
-  tagline: string
-  icon: string
-  skills: TechItem[]
+  skills: Skill[]
+}
+
+// Stroke icons on a 24×24 grid
+const icons: Record<string, string> = {
+  code: 'M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14',
+  gauge: 'M4 18a8 8 0 1116 0M12 14l4-4',
+  layers: 'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',
+  database: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
+  card: 'M3 6h18v12H3zM3 10h18M7 15h3',
+  swap: 'M4 8h15l-3-3M20 16H5l3 3',
+  chat: 'M4 5h16v11H9l-5 4z',
+  search: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4',
+  book: 'M5 5a2 2 0 012-2h12v15H7a2 2 0 00-2 2zM5 20a2 2 0 002 1h12v-3',
+  nodes: 'M4 12a2 2 0 104 0 2 2 0 10-4 0M16 6a2 2 0 104 0 2 2 0 10-4 0M16 18a2 2 0 104 0 2 2 0 10-4 0M8 11l8-4M8 13l8 4',
+  cube: 'M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9',
+  type: 'M5 7V5h14v2M12 5v14M9 19h6',
+  triangle: 'M12 4l9 16H3z',
+  wave: 'M3 10c3-4 6-4 9 0s6 4 9 0M3 16c3-4 6-4 9 0s6 4 9 0',
+  bolt: 'M13 3L4 14h7l-1 7 9-11h-7l1-7z',
+  box: 'M4 8h16v11H4zM8 8V5h8v3M10 13h4',
+  terminal: 'M4 5h16v14H4zM8 10l3 2-3 2M13 15h4',
+  container: 'M3 12h18v3a5 5 0 01-5 5H8a5 5 0 01-5-5zM6 12V9h4v3M10 12V9h4v3M10 9V6h4v3',
+  branch: 'M4 6a2 2 0 104 0 2 2 0 10-4 0M4 18a2 2 0 104 0 2 2 0 10-4 0M16 8a2 2 0 104 0 2 2 0 10-4 0M6 8v8M18 10c0 4-6 3-11 7',
+  send: 'M4 12l16-8-6 16-2-7z',
+  shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',
+  loop: 'M4 12a8 8 0 0114-5.3L20 9M20 4v5h-5M20 12a8 8 0 01-14 5.3L4 15M4 20v-5h5',
 }
 
 const domains: DomainGroup[] = [
   {
     id: 'backend',
     title: 'Backend',
-    tagline: 'High-throughput async APIs, transactional safety & payment engines',
-    icon: 'server',
     skills: [
-      { name: 'Python', tag: 'Async & Enterprise OOP', image: 'python' },
-      { name: 'FastAPI', tag: 'High-Concurrency REST & SSE', image: 'fastapi' },
-      { name: 'Django & DRF', tag: 'ORM, Migrations & APIs', image: 'django' },
-      { name: 'PostgreSQL', tag: 'Relational & pgvector Indexing', image: 'postgresql' },
-      { name: 'Payments', tag: 'ACLEDA Bank & Lemon Squeezy', icon: 'khqr' },
-      { name: 'WebSockets & SSE', tag: 'Bi-Directional Live Streaming', icon: 'ws' },
-    ]
+      { name: 'Python', icon: 'code' },
+      { name: 'FastAPI', icon: 'gauge' },
+      { name: 'Django & DRF', icon: 'layers' },
+      { name: 'PostgreSQL', icon: 'database' },
+      { name: 'Payments', icon: 'card' },
+      { name: 'WebSockets & SSE', icon: 'swap' },
+    ],
   },
   {
     id: 'ai',
-    title: 'LLMs Integration & RAG',
-    tagline: 'Context-grounded RAG pipelines, vector search & Telegram bot automation',
-    icon: 'sparkles',
+    title: 'AI Engineer',
     skills: [
-      { name: 'LLM Integration', tag: 'OpenAI, Gemini & DeepSeek APIs', icon: 'llm' },
-      { name: 'RAG Pipelines', tag: 'Hierarchical Chunking & Retrieval', icon: 'rag' },
-      { name: 'LlamaIndex', tag: 'Document Ingestion & Query Engines', icon: 'llamaindex' },
-      { name: 'pgvector', tag: 'Vector Similarity Search & Indexing', image: 'postgresql' },
-      { name: 'Multi-LLM Routing', tag: 'Dynamic Prompt Fallback & Optimization', icon: 'workflow' },
-      { name: 'Telegram Bot', tag: 'Contextual AI Assistant Automation', icon: 'bot' },
-    ]
+      { name: 'LLM Integration', icon: 'chat' },
+      { name: 'RAG Pipelines', icon: 'search' },
+      { name: 'LlamaIndex', icon: 'book' },
+      { name: 'Agentic AI', icon: 'nodes' },
+    ],
   },
   {
     id: 'frontend',
     title: 'Frontend',
-    tagline: 'Modern, reactive interfaces with strict type-safety & sleek design systems',
-    icon: 'layout',
     skills: [
-      { name: 'Vue.js 3', tag: 'Composition API & Reactive State', image: 'vue' },
-      { name: 'TypeScript', tag: 'Strict Contract Type-Safety', image: 'typescript' },
-      { name: 'Next.js', tag: 'SSR & App Router Architecture', icon: 'nextjs' },
-      { name: 'Tailwind CSS', tag: 'Custom Design Systems & Glassmorphism', image: 'tailwind' },
-      { name: 'Vite', tag: 'Ultra-Fast ESM Bundling & HMR', image: 'vue' },
-      { name: 'State Management', tag: 'Pinia & Reactive Architecture', icon: 'store' },
-    ]
+      { name: 'Vue.js 3', icon: 'cube' },
+      { name: 'TypeScript', icon: 'type' },
+      { name: 'Next.js', icon: 'triangle' },
+      { name: 'Tailwind CSS', icon: 'wave' },
+      { name: 'Vite', icon: 'bolt' },
+      { name: 'State Management', icon: 'box' },
+    ],
   },
   {
     id: 'devops',
-    title: 'DevOps & Cloud Infrastructure',
-    tagline: 'Reliable Linux administration, containerized environments & API testing',
-    icon: 'terminal',
+    title: 'DevOps & Cloud',
     skills: [
-      { name: 'Linux Server Admin', tag: 'Ubuntu / Debian & systemd Services', image: 'linux' },
-      { name: 'Docker & Compose', tag: 'Container Isolation & Multi-Stage', icon: 'docker' },
-      { name: 'Git & GitHub', tag: 'Branching Workflows & Releases', image: 'git' },
-      { name: 'Postman', tag: 'Automated Testing & OpenAPI Specs', image: 'postman' },
-      { name: 'Nginx & SSL', tag: 'Reverse Proxy & Security Hardening', icon: 'shield' },
-      { name: 'CI/CD Automation', tag: 'GitHub Actions & Deployment', icon: 'workflow' },
-    ]
+      { name: 'Linux Server Admin', icon: 'terminal' },
+      { name: 'Docker & Compose', icon: 'container' },
+      { name: 'Git & GitHub', icon: 'branch' },
+      { name: 'Postman', icon: 'send' },
+      { name: 'Nginx & SSL', icon: 'shield' },
+      { name: 'CI/CD Automation', icon: 'loop' },
+    ],
   },
 ]
 
-const categories = [
-  { id: 'all', label: 'All Technologies' },
-  { id: 'backend', label: 'Backend' },
-  { id: 'ai', label: 'LLM & RAG' },
-  { id: 'frontend', label: 'Frontend' },
-  { id: 'devops', label: 'DevOps & Cloud' },
-] as const
+const activeId = ref<DomainGroup['id']>('backend')
+const active = computed(() => domains.find(d => d.id === activeId.value)!)
 
-const activeCategory = ref<string>('all')
+// Diagram geometry. Each layout has its own coordinate space, shared by its SVG and its tiles.
+interface HubLayout {
+  id: 'wide' | 'compact'
+  class: string
+  W: number
+  H: number
+  TILE: number
+  HUB_R: number
+  slots: Record<number, [number, number][]>
+}
 
-const filteredDomains = computed(() => {
-  if (activeCategory.value === 'all') return domains
-  return domains.filter(d => d.id === activeCategory.value)
-})
+const layouts: HubLayout[] = [
+  {
+    // Tablet & desktop: tiles around the hub, as in the reference diagram
+    id: 'wide',
+    class: 'hidden md:block max-w-3xl',
+    W: 1600,
+    H: 900,
+    TILE: 200,
+    HUB_R: 175,
+    slots: {
+      4: [[470, 150], [1130, 150], [470, 750], [1130, 750]],
+      6: [[470, 120], [1130, 120], [230, 450], [1370, 450], [470, 780], [1130, 780]],
+    },
+  },
+  {
+    // Mobile: same arrangement around the hub, in a square frame so tiles stay legible
+    id: 'compact',
+    class: 'md:hidden max-w-md',
+    W: 1000,
+    H: 1000,
+    TILE: 230,
+    HUB_R: 120,
+    slots: {
+      4: [[240, 180], [760, 180], [240, 820], [760, 820]],
+      6: [[260, 170], [740, 170], [130, 500], [870, 500], [260, 830], [740, 830]],
+    },
+  },
+]
+
+const hexPoints = (layout: HubLayout, r: number) =>
+  Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i
+    return `${layout.W / 2 + r * Math.cos(a)},${layout.H / 2 + r * Math.sin(a)}`
+  }).join(' ')
+
+const buildNodes = (layout: HubLayout) => {
+  const { W, H, TILE, HUB_R } = layout
+  const CX = W / 2
+  const CY = H / 2
+  const slots = layout.slots[active.value.skills.length] ?? layout.slots[6]!
+  return active.value.skills.map((skill, i) => {
+    const [x, y] = slots[i] ?? [CX, CY]
+    const dx = x - CX
+    const dy = y - CY
+    const len = Math.hypot(dx, dy)
+    // Stop the connector just outside the hexagon and just outside the tile edge
+    const tileReach = (TILE / 2) * (len / Math.max(Math.abs(dx), Math.abs(dy))) + 24
+    return {
+      ...skill,
+      style: {
+        left: `${((x - TILE / 2) / W) * 100}%`,
+        top: `${((y - TILE / 2) / H) * 100}%`,
+        width: `${(TILE / W) * 100}%`,
+        height: `${(TILE / H) * 100}%`,
+        // Entrance: stagger index + a small start offset pointing back toward the hub
+        '--i': i,
+        '--fx': `${(-dx / len) * 18}px`,
+        '--fy': `${(-dy / len) * 18}px`,
+      },
+      line: {
+        x1: CX + (dx / len) * (HUB_R + 24),
+        y1: CY + (dy / len) * (HUB_R + 24),
+        x2: x - (dx / len) * tileReach,
+        y2: y - (dy / len) * tileReach,
+      },
+    }
+  })
+}
+
+const diagrams = computed(() => layouts.map(layout => ({ layout, nodes: buildNodes(layout) })))
 </script>
 
 <template>
-  <section id="skills" class="py-20 lg:py-28 relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+  <section id="skills" class="py-20 sm:py-28 border-t border-line">
+    <div class="container-page">
+      <SectionHeading
+        index="02"
+        label="Skills"
+      />
 
-      <!-- Section Header -->
-      <div v-reveal class="text-center max-w-2xl mx-auto mb-12">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300 text-xs font-mono font-medium tracking-wide mb-3">
-          <span>// TECHNICAL EXPERTISE</span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
-          Skills & Technologies
-        </h2>
-        <p class="text-slate-400 text-base leading-relaxed">
-          Production-tested frameworks, database engines, and AI orchestration tools I use daily.
-        </p>
-      </div>
-
-      <!-- Category Filter Tabs -->
-      <div v-reveal="{ delay: 100 }" class="flex flex-wrap items-center justify-center gap-2 mb-12">
+      <!-- Category Tabs -->
+      <div v-reveal class="flex flex-nowrap justify-between sm:justify-center gap-x-2 sm:gap-x-6 mb-10 sm:mb-14 border-b border-line" role="tablist">
         <button
-          v-for="cat in categories"
-          :key="cat.id"
-          @click="activeCategory = cat.id"
-          class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200"
-          :class="activeCategory === cat.id
-            ? 'bg-amber-400/10 text-amber-300 border border-amber-400/40 font-semibold shadow-md scale-105'
-            : 'bg-slate-900/60 hover:bg-slate-800/80 text-slate-400 hover:text-white border border-slate-800/80 shadow-xs'"
+          v-for="domain in domains"
+          :key="domain.id"
+          type="button"
+          role="tab"
+          :aria-selected="activeId === domain.id"
+          class="relative -mb-px pb-3 whitespace-nowrap text-[11px] min-[400px]:text-xs sm:text-sm transition-colors border-b"
+          :class="activeId === domain.id ? 'text-fg border-fg' : 'text-muted border-transparent hover:text-fg'"
+          @click="activeId = domain.id"
         >
-          {{ cat.label }}
+          {{ domain.title }}
         </button>
       </div>
 
-      <!-- Categorized Domain Bento Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
-          v-for="(domain, dIdx) in filteredDomains"
-          :key="domain.id"
-          v-reveal="{ delay: (dIdx + 1) * 80 }"
-          class="rounded-3xl p-6 sm:p-8 bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 backdrop-blur-xl shadow-xl shadow-black/20 transition-all duration-300 flex flex-col justify-between group"
-        >
-          <div>
-            <!-- Domain Header -->
-            <div class="flex items-start justify-between gap-4 pb-5 border-b border-slate-800/80">
-              <div class="flex items-center gap-3.5">
-                <!-- Domain Icon -->
-                <div class="w-11 h-11 rounded-2xl bg-slate-800/80 border border-slate-700/60 text-amber-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <!-- Server -->
-                  <svg v-if="domain.icon === 'server'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" stroke-width="2" />
-                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" stroke-width="2" />
-                    <line x1="6" y1="6" x2="6.01" y2="6" stroke-width="2" stroke-linecap="round" />
-                    <line x1="6" y1="18" x2="6.01" y2="18" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                  <!-- Sparkles / AI -->
-                  <svg v-else-if="domain.icon === 'sparkles'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
-                  <!-- Layout / Frontend -->
-                  <svg v-else-if="domain.icon === 'layout'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2" />
-                    <line x1="3" y1="9" x2="21" y2="9" stroke-width="2" />
-                    <line x1="9" y1="21" x2="9" y2="9" stroke-width="2" />
-                  </svg>
-                  <!-- Terminal / DevOps -->
-                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <polyline points="4 17 10 11 4 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="12" y1="19" x2="20" y2="19" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                </div>
+      <!-- Scroll reveal lives on the static wrapper; tab switches only do a quick enter fade -->
+      <div v-reveal="{ delay: 80 }">
+      <Transition
+        enter-active-class="transition-opacity duration-150 ease-out"
+        enter-from-class="opacity-0"
+      >
+        <div :key="active.id">
+          <!-- Hub Diagram: wide layout on tablet & desktop, tall layout on mobile -->
+          <div
+            v-for="{ layout, nodes } in diagrams"
+            :key="layout.id"
+            class="relative mx-auto text-fg"
+            :class="layout.class"
+            :style="{ aspectRatio: `${layout.W} / ${layout.H}` }"
+          >
+            <svg class="absolute inset-0 w-full h-full" :viewBox="`0 0 ${layout.W} ${layout.H}`" fill="none" aria-hidden="true">
+              <defs>
+                <marker :id="`skill-arrow-${layout.id}`" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                  <path d="M1 1l8 4-8 4" fill="none" stroke="rgb(var(--subtle))" stroke-width="1.5" />
+                </marker>
+              </defs>
 
-                <div>
-                  <h3 class="text-lg sm:text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
-                    {{ domain.title }}
-                  </h3>
-                  <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                    {{ domain.tagline }}
-                  </p>
-                </div>
-              </div>
+              <line
+                v-for="(node, i) in nodes"
+                :key="node.name"
+                v-bind="node.line"
+                class="hub-line"
+                :style="{ '--i': i }"
+                pathLength="1"
+                stroke="rgb(var(--subtle))"
+                stroke-width="2.5"
+                :marker-start="`url(#skill-arrow-${layout.id})`"
+                :marker-end="`url(#skill-arrow-${layout.id})`"
+              />
 
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold text-slate-400 bg-slate-800/80 border border-slate-700/60 flex-shrink-0">
-                {{ domain.skills.length }} Tech
+              <!-- Double-outlined hexagon hub -->
+              <g class="hub-core">
+                <polygon :points="hexPoints(layout, layout.HUB_R)" fill="rgb(var(--surface))" stroke="currentColor" stroke-width="3" stroke-linejoin="round" />
+                <polygon :points="hexPoints(layout, layout.HUB_R - 22)" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+              </g>
+            </svg>
+
+            <!-- Hub Label -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <span
+                class="text-center font-semibold uppercase tracking-wide leading-tight text-fg"
+                :class="layout.id === 'wide' ? 'max-w-[14%] text-sm lg:text-base' : 'max-w-[18%] text-[10px]'"
+              >
+                {{ active.title }}
               </span>
             </div>
 
-            <!-- Tech Chips List (Clean 2-column) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
-              <div
-                v-for="tech in domain.skills"
-                :key="tech.name"
-                class="flex items-center gap-3 p-3 rounded-2xl bg-slate-800/40 hover:bg-slate-800/90 border border-slate-800/80 hover:border-amber-400/40 shadow-xs transition-all duration-200 group/item"
-              >
-                <!-- Tech Icon Container -->
-                <div class="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-700/70 flex items-center justify-center p-1.5 flex-shrink-0 group-hover/item:scale-105 transition-transform shadow-xs">
-                  <!-- Python -->
-                  <img
-                    v-if="tech.image === 'python'"
-                    src="@/assets/images/python.png"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- FastAPI -->
-                  <img
-                    v-else-if="tech.image === 'fastapi'"
-                    src="@/assets/images/fastapi_logo.svg"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Django -->
-                  <img
-                    v-else-if="tech.image === 'django'"
-                    src="@/assets/images/django.png"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- PostgreSQL -->
-                  <img
-                    v-else-if="tech.image === 'postgresql'"
-                    src="@/assets/images/postgresql.png"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Vue -->
-                  <img
-                    v-else-if="tech.image === 'vue'"
-                    src="@/assets/images/vue.svg"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- TypeScript -->
-                  <img
-                    v-else-if="tech.image === 'typescript'"
-                    src="@/assets/images/ts.svg"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Tailwind -->
-                  <img
-                    v-else-if="tech.image === 'tailwind'"
-                    src="@/assets/images/tailwind.webp"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Linux -->
-                  <img
-                    v-else-if="tech.image === 'linux'"
-                    src="@/assets/images/linux.png"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Git -->
-                  <img
-                    v-else-if="tech.image === 'git'"
-                    src="@/assets/images/git.png"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Postman -->
-                  <img
-                    v-else-if="tech.image === 'postman'"
-                    src="@/assets/images/postman.svg"
-                    :alt="tech.name"
-                    class="w-full h-full object-contain"
-                  />
-                  <!-- Docker SVG -->
-                  <svg
-                    v-else-if="tech.icon === 'docker'"
-                    class="w-5 h-5"
-                    viewBox="0 0 24 24"
-                    fill="#2496ed"
-                  >
-                    <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.186.185.186zm0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186zm-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186zm-2.956 0h2.12a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.144a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186zm5.886 2.714h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185zm-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185zm-2.956 0h2.12a.186.186 0 00.185-.185V9.006a.186.186 0 00-.185-.186H5.144a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185zm-2.954 0h2.119a.186.186 0 00.185-.185V9.006a.186.186 0 00-.185-.186H2.19a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m21.758.917c-.443-.274-1.424-.415-2.48-.276-1.57.208-2.88 1.134-3.565 2.502-.455.91-.703 1.956-.703 3.064 0 .393.033.777.098 1.15H1.47a.99.99 0 00-.99.99 7.42 7.42 0 004.912 6.993c3.155 1.116 7.64 1.116 10.795 0a7.42 7.42 0 004.912-6.993.99.99 0 00-.99-.99h-.13c.09-.434.137-.883.137-1.341 0-1.898-.82-3.606-2.18-4.793z"/>
-                  </svg>
-                  <!-- Next.js SVG -->
-                  <svg
-                    v-else-if="tech.icon === 'nextjs'"
-                    class="w-4 h-4 text-white"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.66 17.587l-6.398-8.286v8.286H9.72V6.413h1.706l6.634 8.604V6.413h1.54v11.174h-1.94z"/>
-                  </svg>
-                  <!-- KHQR / Payment -->
-                  <svg
-                    v-else-if="tech.icon === 'khqr'"
-                    class="w-4 h-4 text-amber-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <rect x="2" y="5" width="20" height="14" rx="2" stroke-width="2" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-width="2" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                  <!-- WebSockets / Streaming -->
-                  <svg
-                    v-else-if="tech.icon === 'ws'"
-                    class="w-4 h-4 text-sky-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  <!-- LlamaIndex -->
-                  <svg
-                    v-else-if="tech.icon === 'llamaindex'"
-                    class="w-4 h-4 text-purple-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  <!-- RAG -->
-                  <svg
-                    v-else-if="tech.icon === 'rag'"
-                    class="w-4 h-4 text-emerald-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="11" cy="11" r="8" stroke-width="2" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                  <!-- Multi-LLM -->
-                  <svg
-                    v-else-if="tech.icon === 'llm'"
-                    class="w-4 h-4 text-amber-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  <!-- Autonomous Agents -->
-                  <svg
-                    v-else-if="tech.icon === 'agent'"
-                    class="w-4 h-4 text-amber-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <rect x="4" y="4" width="16" height="16" rx="2" stroke-width="2" />
-                    <rect x="9" y="9" width="6" height="6" stroke-width="2" />
-                    <line x1="9" y1="1" x2="9" y2="4" stroke-width="2" stroke-linecap="round" />
-                    <line x1="15" y1="1" x2="15" y2="4" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                  <!-- Search / Embeddings -->
-                  <svg
-                    v-else-if="tech.icon === 'search'"
-                    class="w-4 h-4 text-teal-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <!-- Bot -->
-                  <svg
-                    v-else-if="tech.icon === 'bot'"
-                    class="w-4 h-4 text-sky-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <!-- Store -->
-                  <svg
-                    v-else-if="tech.icon === 'store'"
-                    class="w-4 h-4 text-rose-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6" />
-                  </svg>
-                  <!-- Shield / Nginx -->
-                  <svg
-                    v-else-if="tech.icon === 'shield'"
-                    class="w-4 h-4 text-emerald-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  <!-- Workflow / CI/CD -->
-                  <svg
-                    v-else
-                    class="w-4 h-4 text-amber-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="6" cy="6" r="3" stroke-width="2" />
-                    <circle cx="6" cy="18" r="3" stroke-width="2" />
-                    <circle cx="18" cy="12" r="3" stroke-width="2" />
-                    <line x1="6" y1="9" x2="6" y2="15" stroke-width="2" />
-                    <path d="M9 6h4a5 5 0 015 5v1" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                </div>
-
-                <!-- Text Info -->
-                <div class="min-w-0 flex-1">
-                  <span class="text-sm font-semibold text-slate-200 group-hover/item:text-amber-300 transition-colors truncate block">
-                    {{ tech.name }}
-                  </span>
-                </div>
-              </div>
+            <!-- Skill Tiles -->
+            <div
+              v-for="node in nodes"
+              :key="node.name"
+              class="hub-tile absolute flex flex-col items-center justify-center gap-1 md:gap-2 p-1 md:p-2 rounded-lg md:rounded-xl border-[1.5px] border-fg bg-surface text-fg transition-transform duration-200 hover:-translate-y-1"
+              :style="node.style"
+            >
+              <svg class="w-5 h-5 md:w-7 md:h-7 lg:w-8 lg:h-8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                <path :d="icons[node.icon]" />
+              </svg>
+              <span class="text-[8px] min-[400px]:text-[9px] md:text-[10px] lg:text-[11px] font-medium uppercase tracking-normal md:tracking-wide text-center leading-tight">
+                {{ node.name }}
+              </span>
             </div>
           </div>
         </div>
+      </Transition>
       </div>
-
     </div>
   </section>
 </template>
+
+<style scoped>
+/* Tab-switch entrance: hub settles, connectors draw out, tiles pop in staggered.
+   Opacity/transform only; `backwards` fill so hover transforms work once finished. */
+.hub-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hub-in 240ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hub-line {
+  stroke-dasharray: 1;
+  animation: line-in 280ms ease-out backwards;
+  animation-delay: calc(60ms + var(--i) * 35ms);
+}
+
+.hub-tile {
+  animation: tile-in 300ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(90ms + var(--i) * 35ms);
+}
+
+@keyframes hub-in {
+  from { opacity: 0; transform: scale(0.92); }
+}
+
+@keyframes line-in {
+  from { opacity: 0; stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes tile-in {
+  from { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(0.92); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-core,
+  .hub-line,
+  .hub-tile {
+    animation: none;
+  }
+}
+</style>

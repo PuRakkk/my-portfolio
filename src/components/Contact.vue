@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import SectionHeading from '@/components/SectionHeading.vue'
 
 const FORMSPREE_ID = 'maqbkojb'
 
@@ -83,190 +84,139 @@ const socialLinks = [
 </script>
 
 <template>
-  <section id="contact" class="py-20 lg:py-28 relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+  <section id="contact" class="py-20 sm:py-28 border-t border-line">
+    <div class="container-page">
+      <SectionHeading
+        index="05"
+        label="Contact"
+      />
 
-      <!-- Section Header -->
-      <div v-reveal class="text-center max-w-2xl mx-auto mb-16">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300 text-xs font-mono font-medium tracking-wide mb-3">
-          <span>// GET IN TOUCH</span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
-          Let's Build Something Great
-        </h2>
-        <p class="text-slate-400 text-base leading-relaxed">
-          Open for full-time engineering opportunities, contract roles, and technical collaborations.
-        </p>
-      </div>
-
-      <div class="grid lg:grid-cols-12 gap-8 items-start">
-
-        <!-- Left: Direct Channels & Information (5 cols) -->
-        <div v-reveal="{ delay: 100 }" class="lg:col-span-5 space-y-4">
-
-          <!-- Email Card with Copy-to-Clipboard -->
-          <div class="rounded-2xl p-5 bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-md hover:border-slate-700 transition-all duration-300">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                DIRECT EMAIL
-              </span>
-              <button
-                @click="copyEmail"
-                type="button"
-                class="px-2 py-0.5 rounded text-[11px] font-mono transition-colors"
-                :class="emailCopied ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'"
-              >
-                {{ emailCopied ? 'Copied!' : 'Copy' }}
-              </button>
-            </div>
-            <a
-              href="mailto:sarakchon11@gmail.com"
-              class="text-base sm:text-lg font-bold text-white hover:text-amber-300 transition-colors block"
-            >
-              sarakchon11@gmail.com
-            </a>
-            <p class="text-xs text-slate-500 mt-1">Usually replies within 24 hours</p>
-          </div>
-
-          <!-- Telegram Direct Card -->
-          <div class="rounded-2xl p-5 bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-md hover:border-slate-700 transition-all duration-300">
-            <span class="text-xs font-mono text-slate-400 flex items-center gap-2 mb-2">
-              <span class="w-2 h-2 rounded-full bg-sky-400"></span>
-              PHONE / TELEGRAM
-            </span>
-            <a
-              href="https://t.me/Sarak_chon"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-base sm:text-lg font-bold text-white hover:text-sky-400 transition-colors flex items-center gap-2"
-            >
-              <span>+855 97 387 0816</span>
-              <span class="text-xs font-mono text-sky-400 font-normal">(@Sarak_chon)</span>
-            </a>
-            <p class="text-xs text-slate-500 mt-1">Fastest channel for immediate discussions</p>
-          </div>
-
-          <!-- Location & Timezone Card -->
-          <div class="rounded-2xl p-5 bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-md">
-            <span class="text-xs font-mono text-slate-400 flex items-center gap-2 mb-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              LOCATION & TIMEZONE
-            </span>
-            <div class="text-base font-bold text-white">
-              Phnom Penh, Cambodia
-            </div>
-            <p class="text-xs text-slate-500 font-mono mt-1">Indochina Time (ICT) • GMT+7</p>
-          </div>
-
-          <!-- Social Links Strip -->
-          <div class="pt-2 flex items-center gap-3">
-            <a
-              v-for="social in socialLinks"
-              :key="social.name"
-              :href="social.url"
-              :title="social.name"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex-1 py-3 px-4 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800/80 hover:border-slate-700 text-slate-300 hover:text-white shadow-xs transition-all flex items-center justify-center gap-2 text-xs font-medium"
-            >
-              <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                <path :d="social.icon" />
-              </svg>
-              <span>{{ social.name }}</span>
-            </a>
-          </div>
-
-        </div>
-
-        <!-- Right: Modern Formspree Form (7 cols) -->
-        <div v-reveal="{ delay: 200 }" class="lg:col-span-7 rounded-3xl p-6 sm:p-8 bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-xl shadow-black/20">
-          <h3 class="text-xl font-bold text-white mb-2">Send a Direct Message</h3>
-          <p class="text-xs text-slate-400 mb-6">Fill in the fields below and I'll receive it instantly.</p>
-
-          <form @submit.prevent="handleSubmit" class="space-y-4">
+      <div class="grid md:grid-cols-12 gap-12 md:gap-8">
+        <!-- Direct Channels -->
+        <div v-reveal="{ delay: 80 }" class="md:col-span-5 md:col-start-4 lg:col-span-4">
+          <dl class="space-y-8">
             <div>
-              <label for="name" class="block text-xs font-mono text-slate-400 mb-1.5">YOUR NAME</label>
+              <dt class="eyebrow">Email</dt>
+              <dd class="mt-2 flex flex-wrap items-center gap-3">
+                <a href="mailto:sarakchon11@gmail.com" class="text-base sm:text-lg font-medium text-fg link-underline">
+                  sarakchon11@gmail.com
+                </a>
+                <button
+                  @click="copyEmail"
+                  type="button"
+                  class="px-2 py-0.5 rounded border border-line text-xs font-mono text-muted hover:text-fg hover:border-subtle transition-colors"
+                >
+                  {{ emailCopied ? 'Copied' : 'Copy' }}
+                </button>
+              </dd>
+              <p class="mt-1 text-sm text-subtle">Usually replies within 24 hours</p>
+            </div>
+
+            <div>
+              <dt class="eyebrow">Phone / Telegram</dt>
+              <dd class="mt-2">
+                <a href="https://t.me/Sarak_chon" target="_blank" rel="noopener noreferrer" class="text-base sm:text-lg font-medium text-fg link-underline">
+                  +855 97 387 0816
+                </a>
+                <span class="ml-2 font-mono text-xs text-subtle">@Sarak_chon</span>
+              </dd>
+              <p class="mt-1 text-sm text-subtle">Fastest channel for quick discussions</p>
+            </div>
+
+            <div>
+              <dt class="eyebrow">Location</dt>
+              <dd class="mt-2 text-base sm:text-lg font-medium text-fg">Phnom Penh, Cambodia</dd>
+              <p class="mt-1 text-sm text-subtle font-mono">ICT · GMT+7</p>
+            </div>
+
+            <div>
+              <dt class="eyebrow">Elsewhere</dt>
+              <dd class="mt-3 flex items-center gap-2">
+                <a
+                  v-for="social in socialLinks"
+                  :key="social.name"
+                  :href="social.url"
+                  :title="social.name"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-secondary !px-3 !py-2"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path :d="social.icon" />
+                  </svg>
+                  {{ social.name }}
+                </a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Form -->
+        <div v-reveal="{ delay: 160 }" class="md:col-span-4 lg:col-span-5">
+          <form @submit.prevent="handleSubmit" class="space-y-5">
+            <div>
+              <label for="name" class="block text-sm font-medium text-fg mb-1.5">Name</label>
               <input
                 id="name"
                 v-model="form.name"
                 type="text"
                 required
-                class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:bg-slate-950 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/20 transition-all text-sm font-sans"
-                placeholder="e.g. Alex Morgan"
+                autocomplete="name"
+                class="form-field"
+                placeholder="Alex Morgan"
               />
             </div>
 
             <div>
-              <label for="email" class="block text-xs font-mono text-slate-400 mb-1.5">YOUR EMAIL</label>
+              <label for="email" class="block text-sm font-medium text-fg mb-1.5">Email</label>
               <input
                 id="email"
                 v-model="form.email"
                 type="email"
                 required
-                class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:bg-slate-950 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/20 transition-all text-sm font-sans"
+                autocomplete="email"
+                class="form-field"
                 placeholder="alex@company.com"
               />
             </div>
 
             <div>
-              <label for="message" class="block text-xs font-mono text-slate-400 mb-1.5">MESSAGE</label>
+              <label for="message" class="block text-sm font-medium text-fg mb-1.5">Message</label>
               <textarea
                 id="message"
                 v-model="form.message"
                 required
-                rows="4"
-                class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:bg-slate-950 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/20 transition-all text-sm font-sans resize-none"
+                rows="5"
+                class="form-field resize-none"
                 placeholder="Tell me about your project, timeline, and requirements..."
               ></textarea>
             </div>
 
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              class="w-full py-3.5 px-6 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 disabled:opacity-60 text-slate-950 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm shadow-md shadow-amber-500/15 active:scale-[0.99]"
-            >
-              <svg
-                v-if="isSubmitting"
-                class="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
+            <button type="submit" :disabled="isSubmitting" class="btn-primary w-full justify-center disabled:opacity-60">
+              <svg v-if="isSubmitting" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
               </svg>
-              <span>{{ isSubmitting ? 'Sending Message...' : 'Send Message' }}</span>
-              <svg v-if="!isSubmitting" class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
+              {{ isSubmitting ? 'Sending...' : 'Send message' }}
             </button>
 
-            <!-- Success Notification -->
-            <div
+            <p
               v-if="submitStatus === 'success'"
-              class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300 text-xs font-medium flex items-center gap-2"
+              role="status"
+              class="px-4 py-3 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-sm text-emerald-700 dark:text-emerald-300"
             >
-              <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-              <span>Thank you! Your message has been sent successfully. I will respond promptly.</span>
-            </div>
-
-            <!-- Error Notification -->
-            <div
+              Thanks! Your message has been sent. I'll get back to you soon.
+            </p>
+            <p
               v-if="submitStatus === 'error'"
-              class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-xs font-medium flex items-center gap-2"
+              role="alert"
+              class="px-4 py-3 rounded-md border border-red-500/30 bg-red-500/10 text-sm text-red-700 dark:text-red-300"
             >
-              <svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-              </svg>
-              <span>Failed to send. Please try again or reach out directly at sarakchon11@gmail.com</span>
-            </div>
+              Failed to send. Please try again or email sarakchon11@gmail.com directly.
+            </p>
           </form>
         </div>
-
       </div>
-
     </div>
   </section>
 </template>

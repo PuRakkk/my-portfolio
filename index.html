@@ -15,7 +15,8 @@
             content="Chon Sarak, Full Stack Developer, AI Developer, RAG, FastAPI, Django, Vue.js, Next.js, PostgreSQL, Cambodia"
         />
         <meta name="author" content="Chon Sarak" />
-        <meta name="theme-color" content="#0B0F19" />
+        <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#09090B" media="(prefers-color-scheme: dark)" />
 
         <!-- Open Graph -->
         <meta property="og:title" content="Chon Sarak | Full-Stack Developer & AI Systems" />
@@ -34,17 +35,36 @@
             content="Full-Stack Developer building modern web applications, scalable backends, and AI-powered systems."
         />
 
-        <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+        <!-- Google Fonts: Geist & Geist Mono -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <!-- Loaded without blocking first paint; text shows in the system font, then swaps to Geist -->
         <link
-            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap"
-            rel="stylesheet"
+            rel="preload"
+            as="style"
+            href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'"
         />
+        <noscript>
+            <link
+                rel="stylesheet"
+                href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+            />
+        </noscript>
+
+        <!-- Apply saved / system theme before first paint -->
+        <script>
+            (function () {
+                var saved = null
+                try { saved = localStorage.getItem('theme') } catch (e) {}
+                var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+                if (dark) document.documentElement.classList.add('dark')
+            })()
+        </script>
 
         <title>Chon Sarak | Full-Stack Developer & AI Systems</title>
     </head>
-    <body class="bg-[#0B0F19] text-slate-200 font-sans antialiased selection:bg-amber-500/30 selection:text-amber-200">
+    <body>
         <div id="app"></div>
         <script type="module" src="/src/main.ts"></script>
         <!-- ChatEaver AI Widget -->

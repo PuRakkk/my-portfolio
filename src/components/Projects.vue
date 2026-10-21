@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import SectionHeading from '@/components/SectionHeading.vue'
+import chateaver640 from '@/assets/images/chateaver_banner-640.webp'
+import chateaver1200 from '@/assets/images/chateaver_banner-1200.webp'
+import sportpro640 from '@/assets/images/sportpro_banner-640.webp'
+import sportpro1200 from '@/assets/images/sportpro_banner-1200.webp'
+import cainvite640 from '@/assets/images/cainvite_banner-640.webp'
+import cainvite1200 from '@/assets/images/cainvite_banner-1200.webp'
+import sarakAvatar from '@/assets/images/chon-sarak-360.webp'
+
 interface Project {
   id: number
   title: string
@@ -82,181 +92,364 @@ const projects: Project[] = [
     status: 'maintenance',
   },
 ]
+
+// Resized WebP banners; the browser picks the smaller one on phones
+const banners: Partial<Record<Project['imageKey'], { src: string; srcset: string }>> = {
+  chateaver: { src: chateaver1200, srcset: `${chateaver640} 640w, ${chateaver1200} 1200w` },
+  sportpro: { src: sportpro1200, srcset: `${sportpro640} 640w, ${sportpro1200} 1200w` },
+  cainvite: { src: cainvite1200, srcset: `${cainvite640} 640w, ${cainvite1200} 1200w` },
+}
+// Card width: ~85vw on phones, ~70vw on small tablets, ~530px on laptop
+const bannerSizes = '(min-width: 768px) 530px, (min-width: 640px) 70vw, 85vw'
+
+const statusLabel: Record<Project['status'], string> = {
+  live: 'Live',
+  telegram: 'Live on Telegram',
+  maintenance: 'In maintenance',
+}
+
+// Carousel: free scrolling with an endless loop, mouse dragging and a slow ticker-style drift.
+// The list is rendered three times. We keep the view inside the middle copy: whenever it wanders into an
+// outer copy, we jump by exactly one copy's width. All copies are identical, so the jump is invisible.
+const DRIFT_PX_PER_SEC = 35
+const RESUME_DELAY_MS = 1200
+const COPIES = 3
+const n = projects.length
+
+const loopItems = Array.from({ length: COPIES }, (_, copy) =>
+  projects.map((project, i) => ({ project, realIndex: i, copy, key: `${copy}-${project.id}` }))
+).flat()
+
+const track = ref<HTMLElement | null>(null)
+const activeIndex = ref(0)
+const visible = ref<boolean[]>(loopItems.map(() => false))
+let firstVisible = n
+
+const cards = () => Array.from(track.value?.children ?? []) as HTMLElement[]
+const padLeft = (el: HTMLElement) => parseFloat(getComputedStyle(el).paddingLeft)
+const cardLeft = (el: HTMLElement, index: number) => (cards()[index]?.offsetLeft ?? 0) - padLeft(el)
+const copyWidth = (el: HTMLElement) => cardLeft(el, n) - cardLeft(el, 0)
+
+// Width of one copy of the list, measured on mount and resize rather than on every frame
+let cachedWidth = 0
+const measure = () => {
+  if (track.value) cachedWidth = copyWidth(track.value)
+}
+
+// Drift state. `pos` is a float so slow speeds still move even where scrollLeft rounds to whole pixels.
+let pos = 0
+let lastSet = 0
+let driftFrame = 0
+let lastTime = 0
+let resumeAt = 0
+const pauseReasons = new Set<string>()
+const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const setScroll = (el: HTMLElement, value: number) => {
+  pos = value
+  el.scrollLeft = value
+  lastSet = el.scrollLeft
+}
+
+let stateFrame = 0
+const updateState = () => {
+  cancelAnimationFrame(stateFrame)
+  stateFrame = requestAnimationFrame(() => {
+    const el = track.value
+    if (!el) return
+    const box = el.getBoundingClientRect()
+
+    // A card counts as visible when most of it is inside the track
+    const rects = cards().map(card => card.getBoundingClientRect())
+    visible.value = rects.map(r => {
+      const overlap = Math.min(r.right, box.right) - Math.max(r.left, box.left)
+      return overlap / r.width > 0.75
+    })
+    // The "current" card is the first one with more than half of it showing (works between cards too)
+    firstVisible = Math.max(rects.findIndex(r => r.right - box.left > r.width / 2), 0)
+    activeIndex.value = firstVisible % n
+  })
+}
+
+// Keep the view inside the middle copy
+const wrap = (el: HTMLElement) => {
+  const width = cachedWidth
+  if (!width) return
+  if (el.scrollLeft < width * 0.5) setScroll(el, el.scrollLeft + width)
+  else if (el.scrollLeft >= width * 1.5) setScroll(el, el.scrollLeft - width)
+}
+
+// Scrolls we didn't cause (swipe, trackpad, momentum, dot clicks) pause the drift until they go quiet
+let settleTimer: ReturnType<typeof setTimeout> | undefined
+const onScroll = () => {
+  const el = track.value
+  if (!el) return
+  updateState()
+  if (Math.abs(el.scrollLeft - lastSet) <= 1) return
+  pos = lastSet = el.scrollLeft
+  setPaused('scrolling', true)
+  clearTimeout(settleTimer)
+  settleTimer = setTimeout(() => {
+    if (!pauseReasons.has('pointer')) wrap(el)
+    setPaused('scrolling', false)
+  }, 150)
+}
+
+const tick = (time: number) => {
+  const el = track.value
+  // Stop the loop entirely while paused (off-screen, hidden tab, hover…); setPaused restarts it
+  if (!el || pauseReasons.size > 0) {
+    driftFrame = 0
+    lastTime = 0
+    return
+  }
+  driftFrame = requestAnimationFrame(tick)
+  const dt = lastTime ? Math.min(time - lastTime, 64) : 0
+  lastTime = time
+  if (performance.now() < resumeAt) return
+  pos += (DRIFT_PX_PER_SEC * dt) / 1000
+  el.scrollLeft = pos
+  lastSet = el.scrollLeft
+  if (cachedWidth && pos >= cachedWidth * 1.5) setScroll(el, pos - cachedWidth)
+}
+
+const startDrift = () => {
+  if (!driftFrame && !reducedMotion) driftFrame = requestAnimationFrame(tick)
+}
+
+const setPaused = (reason: string, paused: boolean) => {
+  const wasPaused = pauseReasons.size > 0
+  if (paused) pauseReasons.add(reason)
+  else pauseReasons.delete(reason)
+  // Give the visitor a moment before the drift picks up again
+  if (wasPaused && pauseReasons.size === 0) {
+    resumeAt = performance.now() + RESUME_DELAY_MS
+    if (track.value) pos = lastSet = track.value.scrollLeft
+    startDrift()
+  }
+}
+
+const scrollToIndex = (index: number) => {
+  const el = track.value
+  if (!el) return
+  el.scrollTo({ left: cardLeft(el, index), behavior: 'smooth' })
+}
+
+const step = (dir: 1 | -1) => scrollToIndex(firstVisible + dir)
+
+// Dots jump to the nearest copy of that project, so the motion stays short
+const goTo = (realIndex: number) => {
+  const candidates = Array.from({ length: COPIES }, (_, copy) => realIndex + copy * n)
+  const nearest = candidates.reduce((a, b) => (Math.abs(b - firstVisible) < Math.abs(a - firstVisible) ? b : a))
+  scrollToIndex(nearest)
+}
+
+// Taps on phones fire hover/focus events that never "end", so only a real mouse hover
+// or keyboard focus pauses the drift
+const onHover = (e: PointerEvent, entering: boolean) => {
+  if (e.pointerType === 'mouse') setPaused('hover', entering)
+}
+const onFocusIn = (e: FocusEvent) => {
+  if ((e.target as Element).matches(':focus-visible')) setPaused('focus', true)
+}
+
+// Mouse drag (touch already scrolls natively)
+let drag: { startX: number; startScroll: number; moved: boolean } | null = null
+let suppressClick = false
+
+const onPointerDown = (e: PointerEvent) => {
+  setPaused('pointer', true)
+  if (e.pointerType !== 'mouse' || !track.value) return
+  drag = { startX: e.clientX, startScroll: track.value.scrollLeft, moved: false }
+}
+
+const onPointerMove = (e: PointerEvent) => {
+  if (!drag || !track.value) return
+  const dx = e.clientX - drag.startX
+  if (Math.abs(dx) > 4) drag.moved = true
+  track.value.scrollLeft = drag.startScroll - dx
+}
+
+const onPointerUp = () => {
+  if (!pauseReasons.has('pointer')) return
+  if (drag?.moved) suppressClick = true
+  drag = null
+  // Free scrolling: stay exactly where the visitor let go. Wrapping happens once scrolling goes quiet
+  // (see onScroll); doing it here would fire mid-gesture on touch, where pointercancel arrives as panning starts.
+  setPaused('pointer', false)
+}
+
+// A drag that ends over a link should not open it
+const onClickCapture = (e: MouseEvent) => {
+  if (!suppressClick) return
+  suppressClick = false
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+const onResize = () => {
+  // Card widths change with the viewport; stay on the current project in the middle copy
+  const el = track.value
+  if (!el) return
+  measure()
+  setScroll(el, cardLeft(el, n + (firstVisible % n)))
+  updateState()
+}
+
+let observer: IntersectionObserver | undefined
+const onVisibility = () => setPaused('hidden', document.hidden)
+
+onMounted(() => {
+  const el = track.value
+  if (!el) return
+  // Start on the first project of the middle copy, so there is room to scroll either way
+  measure()
+  setScroll(el, cardLeft(el, n))
+  updateState()
+  window.addEventListener('resize', onResize, { passive: true })
+  window.addEventListener('pointerup', onPointerUp)
+  window.addEventListener('pointercancel', onPointerUp)
+  document.addEventListener('visibilitychange', onVisibility)
+  if ('IntersectionObserver' in window) {
+    observer = new IntersectionObserver(([entry]) => setPaused('offscreen', !entry?.isIntersecting), { threshold: 0.4 })
+    observer.observe(el)
+  }
+  startDrift()
+})
+
+onUnmounted(() => {
+  cancelAnimationFrame(stateFrame)
+  cancelAnimationFrame(driftFrame)
+  clearTimeout(settleTimer)
+  observer?.disconnect()
+  window.removeEventListener('resize', onResize)
+  window.removeEventListener('pointerup', onPointerUp)
+  window.removeEventListener('pointercancel', onPointerUp)
+  document.removeEventListener('visibilitychange', onVisibility)
+})
 </script>
 
 <template>
-  <section id="projects" class="py-20 lg:py-28 relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      
-      <!-- Section Header -->
-      <div v-reveal class="text-center max-w-2xl mx-auto mb-16">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300 text-xs font-mono font-medium tracking-wide mb-3">
-          <span>// FEATURED WORK</span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
-          Production Systems & Projects
-        </h2>
-        <p class="text-slate-400 text-base leading-relaxed">
-          Architected from scratch for resilience, scalability, and seamless user interaction.
-        </p>
-      </div>
+  <section id="projects" class="py-20 sm:py-28 border-t border-line">
+    <div class="container-page">
+      <SectionHeading index="04" label="Projects" />
 
-      <!-- Project Cards Grid -->
-      <div class="space-y-12">
+      <!-- Track: bleeds to the screen edge on phones so the next card peeks in -->
+      <div
+        ref="track"
+        v-reveal
+        class="no-scrollbar relative -mx-4 sm:-mx-6 md:mx-0 px-4 sm:px-6 md:px-0 scroll-px-4 sm:scroll-px-6 md:scroll-px-0 flex gap-4 md:gap-6 overflow-x-auto md:cursor-grab md:active:cursor-grabbing select-none overscroll-x-contain focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 rounded-lg"
+        tabindex="0"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Projects"
+        @scroll.passive="onScroll"
+        @keydown.right.prevent="step(1)"
+        @keydown.left.prevent="step(-1)"
+        @pointerenter="onHover($event, true)"
+        @pointerleave="onHover($event, false)"
+        @focusin="onFocusIn"
+        @focusout="setPaused('focus', false)"
+        @pointerdown="onPointerDown"
+        @pointermove="onPointerMove"
+        @click.capture="onClickCapture"
+        @dragstart.prevent
+      >
         <article
-          v-for="project in projects"
-          :key="project.id"
-          v-reveal
-          class="rounded-3xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 overflow-hidden backdrop-blur-xl shadow-xl shadow-black/20 transition-all duration-300 group"
+          v-for="({ project, realIndex, copy, key }, loopIdx) in loopItems"
+          :key="key"
+          class="group shrink-0 basis-[85%] sm:basis-[70%] md:basis-[46%] flex flex-col transition-opacity duration-300"
+          :class="visible[loopIdx] ? 'opacity-100' : 'opacity-50'"
+          :aria-hidden="copy !== 1 || undefined"
+          :aria-label="`${realIndex + 1} of ${projects.length}: ${project.title}`"
         >
-          <div class="grid lg:grid-cols-12 gap-0 items-stretch">
-            
-            <!-- Project Image Frame (5 cols) -->
-            <div class="lg:col-span-5 relative min-h-[260px] sm:min-h-[300px] bg-slate-950 overflow-hidden flex items-center justify-center">
-              
-              <!-- ChatEaver Banner -->
-              <div v-if="project.imageKey === 'chateaver'" class="w-full h-full relative">
-                <img
-                  src="@/assets/images/chateaver_banner.png"
-                  :alt="project.title"
-                  class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                <div class="absolute bottom-4 left-4 w-12 h-12 rounded-xl bg-slate-900/90 border border-white/15 p-2 backdrop-blur-md shadow-xl flex items-center justify-center">
-                  <img src="@/assets/images/chateaver_logo.png" alt="ChatEaver Logo" class="w-full h-full object-contain" />
-                </div>
+          <!-- Image -->
+          <component
+            :is="project.liveUrl ? 'a' : 'div'"
+            :href="project.liveUrl"
+            :target="project.liveUrl ? '_blank' : undefined"
+            :rel="project.liveUrl ? 'noopener noreferrer' : undefined"
+            :tabindex="project.liveUrl ? -1 : undefined"
+            class="block aspect-[16/10] rounded-lg overflow-hidden border border-line bg-surface"
+          >
+            <img
+              v-if="banners[project.imageKey]"
+              :src="banners[project.imageKey]!.src"
+              :srcset="banners[project.imageKey]!.srcset"
+              :sizes="bannerSizes"
+              :alt="`${project.title} screenshot`"
+              decoding="async"
+              class="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              loading="lazy"
+              draggable="false"
+            />
+            <!-- Telegram bot: avatar + handle -->
+            <div v-else class="w-full h-full flex flex-col items-center justify-center gap-4">
+              <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border border-line">
+                <img :src="sarakAvatar" :alt="project.title" class="w-full h-full object-cover object-[50%_32%] scale-[1.45]" loading="lazy" decoding="async" draggable="false" />
               </div>
+              <span class="font-mono text-xs sm:text-sm text-muted">@sarak_assistant_bot</span>
+            </div>
+          </component>
 
-              <!-- SportPro Banner -->
-              <div v-else-if="project.imageKey === 'sportpro'" class="w-full h-full relative">
-                <img
-                  src="@/assets/images/sportpro_banner.png"
-                  :alt="project.title"
-                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                <div class="absolute bottom-4 left-4 w-12 h-12 rounded-xl bg-slate-900/90 border border-white/15 p-2 backdrop-blur-md shadow-xl flex items-center justify-center">
-                  <img src="@/assets/images/sportpro_logo.png" alt="SportPro Logo" class="w-full h-full object-contain" />
-                </div>
-              </div>
-
-              <!-- Telegram Bot with Sarak Avatar -->
-              <div v-else-if="project.imageKey === 'chon-sarak'" class="w-full h-full relative flex items-center justify-center p-8 bg-gradient-to-br from-slate-900 to-slate-950">
-                <div class="relative flex flex-col items-center">
-                  <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-amber-400/40 shadow-xl group-hover:scale-110 transition-transform duration-500">
-                    <img
-                      src="@/assets/images/chon-sarak.png"
-                      :alt="project.title"
-                      class="w-full h-full object-cover object-[50%_32%] scale-[1.45]"
-                    />
-                  </div>
-                  <div class="mt-4 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-700/80 text-sky-400 text-xs font-mono font-medium flex items-center gap-1.5 shadow-xs">
-                    <svg class="w-3.5 h-3.5 text-sky-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                    <span>@sarak_assistant_bot</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- CaInvite Banner -->
-              <div v-else-if="project.imageKey === 'cainvite'" class="w-full h-full relative">
-                <img
-                  src="@/assets/images/cainvite_banner.png"
-                  :alt="project.title"
-                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                <div class="absolute bottom-4 left-4 w-12 h-12 rounded-xl bg-slate-900/90 border border-white/15 p-2 backdrop-blur-md shadow-xl flex items-center justify-center">
-                  <img src="@/assets/images/logo.webp" alt="CaInvite Logo" class="w-full h-full object-contain" />
-                </div>
-              </div>
-
-              <!-- Status Badge (Top Right) -->
-              <div class="absolute top-4 right-4 z-20">
+          <!-- Details -->
+          <div class="flex flex-col flex-1 pt-5">
+            <div class="flex items-center gap-3 text-xs font-mono text-subtle">
+              <span>{{ String(realIndex + 1).padStart(2, '0') }}</span>
+              <span class="w-6 h-px bg-line"></span>
+              <span class="inline-flex items-center gap-1.5">
                 <span
-                  v-if="project.status === 'live'"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-medium backdrop-blur-md shadow-md"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  Live Production
-                </span>
-
-                <span
-                  v-else-if="project.status === 'telegram'"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-sky-500/30 text-sky-400 text-xs font-mono font-medium backdrop-blur-md shadow-md"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
-                  Telegram AI
-                </span>
-
-                <span
-                  v-else-if="project.status === 'maintenance'"
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-amber-500/30 text-amber-300 text-xs font-mono font-medium backdrop-blur-md shadow-md"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                  Under Maintenance
-                </span>
-              </div>
+                  class="w-1.5 h-1.5 rounded-full"
+                  :class="project.status === 'maintenance' ? 'bg-amber-500' : 'bg-emerald-500'"
+                ></span>
+                {{ statusLabel[project.status] }}
+              </span>
             </div>
 
-            <!-- Project Details (7 cols) -->
-            <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
-              <div>
-                <h3 class="text-2xl font-bold text-white tracking-tight group-hover:text-amber-300 transition-colors">
-                  {{ project.title }}
-                </h3>
-                <p class="text-xs font-mono text-amber-400 mt-1 mb-3">
-                  {{ project.subtitle }}
-                </p>
-                <p class="text-sm text-slate-300 leading-relaxed mb-6">
-                  {{ project.description }}
-                </p>
+            <h3 class="mt-3 text-xl sm:text-2xl font-semibold tracking-tight text-fg">{{ project.title }}</h3>
+            <p class="mt-1 text-sm text-muted">{{ project.subtitle }}</p>
 
-                <!-- Tech Tags -->
-                <div class="flex flex-wrap gap-1.5 mb-6">
-                  <span
-                    v-for="tag in project.tags"
-                    :key="tag"
-                    class="px-2.5 py-1 rounded-md bg-slate-800/70 border border-slate-700/60 text-[11px] font-mono text-slate-300"
-                  >
-                    {{ tag }}
-                  </span>
-                </div>
-              </div>
+            <p class="mt-4 font-mono text-xs text-subtle leading-relaxed">
+              {{ project.tags.join(' · ') }}
+            </p>
 
-              <!-- Action Row -->
-              <div class="pt-4 border-t border-slate-800/80 flex items-center">
-                <span
-                  v-if="project.status === 'maintenance'"
-                  class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-300 text-xs font-medium cursor-not-allowed select-none"
-                >
-                  <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                  </svg>
-                  <span>Platform Under Maintenance</span>
-                </span>
-
-                <a
-                  v-else-if="project.liveUrl"
-                  :href="project.liveUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-semibold shadow-md shadow-amber-500/15 transition-all active:scale-95"
-                >
-                  <span>{{ project.liveUrlLabel || 'Visit Platform' }}</span>
-                  <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-
+            <a
+              v-if="project.liveUrl"
+              :href="project.liveUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              :tabindex="copy !== 1 ? -1 : undefined"
+              class="mt-auto pt-5 self-start inline-flex items-center gap-1.5 text-sm font-medium text-fg link-underline"
+            >
+              {{ project.liveUrlLabel || 'Visit platform' }}
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </a>
           </div>
         </article>
       </div>
 
+      <!-- Position: dots everywhere, counter from tablet up -->
+      <div class="mt-8 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button
+            v-for="(project, i) in projects"
+            :key="project.id"
+            type="button"
+            class="h-1.5 rounded-full transition-all duration-300"
+            :class="activeIndex === i ? 'w-6 bg-fg' : 'w-1.5 bg-line hover:bg-subtle'"
+            :aria-label="`Go to ${project.title}`"
+            :aria-current="activeIndex === i"
+            @click="goTo(i)"
+          ></button>
+        </div>
+
+        <span class="hidden md:inline font-mono text-xs text-subtle">
+          <span class="text-fg">{{ String(activeIndex + 1).padStart(2, '0') }}</span>
+          / {{ String(projects.length).padStart(2, '0') }}
+        </span>
+      </div>
     </div>
   </section>
 </template>
-

@@ -10,23 +10,14 @@ const scrollToSection = (href: string) => {
 
 const stats = [
   { value: '2+', label: 'Years experience' },
-  { value: '4+', label: 'Shipped systems' },
+  { value: '4', label: 'Shipped systems' },
   { value: '100%', label: 'Delivery rate' },
 ]
 </script>
 
 <template>
-  <section id="home" class="pt-36 pb-20 sm:pt-44 sm:pb-28">
+  <section id="home" class="pt-28 pb-14 sm:pt-36 sm:pb-20">
     <div class="container-page">
-      <!-- Availability -->
-      <div v-reveal class="flex items-center gap-2 mb-6 sm:mb-8 text-xs sm:text-sm text-muted">
-        <span class="relative flex w-2 h-2">
-          <span class="absolute inline-flex w-full h-full rounded-full bg-emerald-500 opacity-60 animate-ping"></span>
-          <span class="relative inline-flex w-2 h-2 rounded-full bg-emerald-500"></span>
-        </span>
-        Available for work · Phnom Penh, GMT+7
-      </div>
-
       <!-- Headline -->
       <h1 v-reveal="{ delay: 60 }" class="text-[2rem] leading-[1.1] sm:text-6xl lg:text-7xl font-semibold tracking-tight text-fg max-w-4xl text-balance">
         Full-Stack and <span class="text-accent">AI Automation</span> Engineer

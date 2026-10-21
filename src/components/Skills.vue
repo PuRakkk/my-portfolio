@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import SectionHeading from '@/components/SectionHeading.vue'
 
 interface Skill {
@@ -90,6 +90,53 @@ const domains: DomainGroup[] = [
 
 const activeId = ref<DomainGroup['id']>('backend')
 const active = computed(() => domains.find(d => d.id === activeId.value)!)
+const activeIdx = computed(() => domains.findIndex(d => d.id === activeId.value))
+const nextDomain = computed(() => domains[(activeIdx.value + 1) % domains.length]!)
+
+// Categories the visitor has opened, so unseen ones can show a small "there's more" dot
+const visited = ref(new Set<DomainGroup['id']>(['backend']))
+const hasUnseen = computed(() => visited.value.size < domains.length)
+
+const select = (id: DomainGroup['id']) => {
+  activeId.value = id
+  visited.value = new Set([...visited.value, id])
+}
+const go = (dir: 1 | -1) => select(domains[(activeIdx.value + dir + domains.length) % domains.length]!.id)
+
+// Sliding underline under the active tab
+const tabEls = ref<HTMLElement[]>([])
+const indicator = ref({ left: 0, width: 0 })
+const moveIndicator = () => {
+  const el = tabEls.value[activeIdx.value]
+  if (el) indicator.value = { left: el.offsetLeft, width: el.offsetWidth }
+}
+watch(activeIdx, () => nextTick(moveIndicator))
+onMounted(() => {
+  moveIndicator()
+  // Fonts swap in after first paint and change tab widths
+  document.fonts?.ready.then(moveIndicator)
+  window.addEventListener('resize', moveIndicator, { passive: true })
+})
+onUnmounted(() => window.removeEventListener('resize', moveIndicator))
+
+// Swipe left/right on the diagram (touch) to change category
+let swipeStart: { x: number; y: number } | null = null
+const onSwipeStart = (e: PointerEvent) => {
+  if (e.pointerType !== 'mouse') swipeStart = { x: e.clientX, y: e.clientY }
+}
+const onSwipeEnd = (e: PointerEvent) => {
+  if (!swipeStart) return
+  const dx = e.clientX - swipeStart.x
+  const dy = e.clientY - swipeStart.y
+  swipeStart = null
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1)
+}
+
+const pad = (value: number) => String(value).padStart(2, '0')
+
+// Labels sit below the icon, where the hexagon narrows, so they wrap within 70% of the tile.
+// A long word (e.g. "INTEGRATION") can't wrap, so those labels get a slightly smaller, tighter font.
+const hasLongWord = (label: string) => Math.max(...label.split(/\s+/).map(word => word.length)) >= 10
 
 // Diagram geometry. Each layout has its own coordinate space, shared by its SVG and its tiles.
 interface HubLayout {
@@ -122,14 +169,26 @@ const layouts: HubLayout[] = [
     class: 'md:hidden max-w-md',
     W: 1000,
     H: 1000,
-    TILE: 230,
+    TILE: 260,
     HUB_R: 120,
     slots: {
       4: [[240, 180], [760, 180], [240, 820], [760, 820]],
-      6: [[260, 170], [740, 170], [130, 500], [870, 500], [260, 830], [740, 830]],
+      6: [[265, 160], [735, 160], [140, 500], [860, 500], [265, 840], [735, 840]],
     },
   },
 ]
+
+// Distance from a flat-top hexagon's centre to its edge along `angle` (circumradius r).
+// Edge normals sit at 30°, 90°, 150°…, so fold the angle into a ±30° sector around the nearest one.
+const hexReach = (angle: number, r: number) => {
+  const sector = Math.PI / 3
+  // e.g. angle 0 (a vertex) → offset ±30° → reach r; angle 90° (flat top edge) → offset 0 → reach r·cos30°
+  const offset = ((((angle - Math.PI / 6) % sector) + sector + sector / 2) % sector) - sector / 2
+  return (r * Math.cos(Math.PI / 6)) / Math.cos(offset)
+}
+
+// Flat-top hexagon in a 100×100 box, matching the hub's orientation
+const TILE_HEX = '1,50 25.5,6.7 74.5,6.7 99,50 74.5,93.3 25.5,93.3'
 
 const hexPoints = (layout: HubLayout, r: number) =>
   Array.from({ length: 6 }, (_, i) => {
@@ -148,7 +207,7 @@ const buildNodes = (layout: HubLayout) => {
     const dy = y - CY
     const len = Math.hypot(dx, dy)
     // Stop the connector just outside the hexagon and just outside the tile edge
-    const tileReach = (TILE / 2) * (len / Math.max(Math.abs(dx), Math.abs(dy))) + 24
+    const tileReach = hexReach(Math.atan2(dy, dx), TILE / 2) + 24
     return {
       ...skill,
       style: {
@@ -175,7 +234,7 @@ const diagrams = computed(() => layouts.map(layout => ({ layout, nodes: buildNod
 </script>
 
 <template>
-  <section id="skills" class="py-20 sm:py-28 border-t border-line">
+  <section id="skills" class="py-14 sm:py-20 border-t border-line">
     <div class="container-page">
       <SectionHeading
         index="02"
@@ -183,25 +242,52 @@ const diagrams = computed(() => layouts.map(layout => ({ layout, nodes: buildNod
       />
 
       <!-- Category Tabs -->
-      <div v-reveal class="flex flex-nowrap justify-between sm:justify-center gap-x-2 sm:gap-x-6 mb-10 sm:mb-14 border-b border-line" role="tablist">
+      <div
+        v-reveal
+        class="relative flex flex-nowrap justify-between sm:justify-center gap-x-2 sm:gap-x-8 mb-8 sm:mb-10 border-b border-line"
+        role="tablist"
+        @keydown.right.prevent="go(1)"
+        @keydown.left.prevent="go(-1)"
+      >
         <button
-          v-for="domain in domains"
+          v-for="(domain, dIdx) in domains"
           :key="domain.id"
+          :ref="el => { if (el) tabEls[dIdx] = el as HTMLElement }"
           type="button"
           role="tab"
           :aria-selected="activeId === domain.id"
-          class="relative -mb-px pb-3 whitespace-nowrap text-[11px] min-[400px]:text-xs sm:text-sm transition-colors border-b"
-          :class="activeId === domain.id ? 'text-fg border-fg' : 'text-muted border-transparent hover:text-fg'"
-          @click="activeId = domain.id"
+          :tabindex="activeId === domain.id ? 0 : -1"
+          class="relative pb-3 inline-flex items-baseline gap-1.5 whitespace-nowrap text-[11px] min-[400px]:text-xs sm:text-sm transition-colors"
+          :class="activeId === domain.id ? 'text-fg' : 'text-muted hover:text-fg'"
+          @click="select(domain.id)"
         >
+          <span class="hidden sm:inline font-mono text-[10px] text-subtle">{{ pad(dIdx + 1) }}</span>
           {{ domain.title }}
+          <!-- Unseen category: small pulsing dot -->
+          <span v-if="!visited.has(domain.id)" class="absolute -top-0.5 -right-2 flex w-1.5 h-1.5" aria-hidden="true">
+            <span class="absolute inline-flex w-full h-full rounded-full bg-accent opacity-60 animate-ping"></span>
+            <span class="relative inline-flex w-1.5 h-1.5 rounded-full bg-accent"></span>
+          </span>
         </button>
+
+        <!-- Sliding underline -->
+        <span
+          class="absolute -bottom-px h-0.5 bg-fg rounded-full transition-all duration-300 ease-out"
+          :style="{ left: `${indicator.left}px`, width: `${indicator.width}px` }"
+          aria-hidden="true"
+        ></span>
       </div>
 
       <!-- Scroll reveal lives on the static wrapper; tab switches only do a quick enter fade -->
-      <div v-reveal="{ delay: 80 }">
+      <div
+        v-reveal="{ delay: 80 }"
+        class="touch-pan-y"
+        @pointerdown="onSwipeStart"
+        @pointerup="onSwipeEnd"
+        @pointercancel="swipeStart = null"
+      >
       <Transition
-        enter-active-class="transition-opacity duration-150 ease-out"
+        enter-active-class="transition-opacity duration-200 ease-out"
         enter-from-class="opacity-0"
       >
         <div :key="active.id">
@@ -250,23 +336,54 @@ const diagrams = computed(() => layouts.map(layout => ({ layout, nodes: buildNod
               </span>
             </div>
 
-            <!-- Skill Tiles -->
+            <!-- Skill Tiles: hexagon frames, same orientation as the hub -->
             <div
               v-for="node in nodes"
               :key="node.name"
-              class="hub-tile absolute flex flex-col items-center justify-center gap-1 md:gap-2 p-1 md:p-2 rounded-lg md:rounded-xl border-[1.5px] border-fg bg-surface text-fg transition-transform duration-200 hover:-translate-y-1"
+              class="hub-tile group/tile absolute flex flex-col items-center justify-center gap-0.5 md:gap-1.5 text-fg transition-transform duration-200 hover:-translate-y-1"
               :style="node.style"
             >
-              <svg class="w-5 h-5 md:w-7 md:h-7 lg:w-8 lg:h-8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+              <svg class="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <polygon
+                  :points="TILE_HEX"
+                  fill="rgb(var(--surface))"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linejoin="round"
+                  vector-effect="non-scaling-stroke"
+                  class="transition-[stroke] duration-200 group-hover/tile:stroke-accent"
+                />
+              </svg>
+              <svg class="relative w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
                 <path :d="icons[node.icon]" />
               </svg>
-              <span class="text-[8px] min-[400px]:text-[9px] md:text-[10px] lg:text-[11px] font-medium uppercase tracking-normal md:tracking-wide text-center leading-tight">
+              <span
+                class="relative max-w-[70%] font-medium uppercase text-center leading-tight"
+                :class="hasLongWord(node.name)
+                  ? 'text-[7px] md:text-[8px] lg:text-[8.5px] tracking-normal'
+                  : 'text-[7px] min-[400px]:text-[8px] md:text-[9px] lg:text-[10px] tracking-normal md:tracking-wide'"
+              >
                 {{ node.name }}
               </span>
             </div>
           </div>
         </div>
       </Transition>
+      </div>
+
+      <!-- Next category: makes it obvious there is more than Backend -->
+      <div class="mt-8 sm:mt-10 max-w-3xl mx-auto pt-4 border-t border-line flex items-center justify-between gap-4">
+        <span class="font-mono text-xs text-subtle">
+          <span class="text-fg">{{ pad(activeIdx + 1) }}</span> / {{ pad(domains.length) }}
+          <span v-if="hasUnseen" class="md:hidden ml-2">· swipe to explore</span>
+        </span>
+        <button type="button" class="group/next inline-flex items-center gap-1.5 text-sm font-medium text-fg" @click="go(1)">
+          <span class="text-muted">{{ activeIdx === domains.length - 1 ? 'Back to' : 'Next:' }}</span>
+          {{ nextDomain.title }}
+          <svg class="w-4 h-4 transition-transform group-hover/next:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6l6 6-6 6" />
+          </svg>
+        </button>
       </div>
     </div>
   </section>
@@ -278,18 +395,18 @@ const diagrams = computed(() => layouts.map(layout => ({ layout, nodes: buildNod
 .hub-core {
   transform-box: fill-box;
   transform-origin: center;
-  animation: hub-in 240ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation: hub-in 360ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .hub-line {
   stroke-dasharray: 1;
-  animation: line-in 280ms ease-out backwards;
-  animation-delay: calc(60ms + var(--i) * 35ms);
+  animation: line-in 420ms ease-out backwards;
+  animation-delay: calc(90ms + var(--i) * 55ms);
 }
 
 .hub-tile {
-  animation: tile-in 300ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  animation-delay: calc(90ms + var(--i) * 35ms);
+  animation: tile-in 450ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(140ms + var(--i) * 55ms);
 }
 
 @keyframes hub-in {

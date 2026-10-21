@@ -126,7 +126,7 @@ const pad = (value: number) => String(value).padStart(2, '0')
 </script>
 
 <template>
-  <section id="experience" class="py-20 sm:py-28 border-t border-line">
+  <section id="experience" class="py-14 sm:py-20 border-t border-line">
     <div class="container-page">
       <SectionHeading
         index="03"

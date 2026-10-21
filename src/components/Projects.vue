@@ -330,7 +330,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section id="projects" class="py-20 sm:py-28 border-t border-line">
+  <section id="projects" class="py-14 sm:py-20 border-t border-line">
     <div class="container-page">
       <SectionHeading index="04" label="Projects" />
 

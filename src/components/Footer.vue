@@ -12,7 +12,7 @@ const links = [
 <template>
   <footer class="border-t border-line">
     <div class="container-page py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
-      <p>&copy; {{ currentYear }} Chon Sarak. Built in Phnom Penh.</p>
+      <p>&copy; {{ currentYear }} Chon Sarak</p>
       <nav class="flex items-center gap-6">
         <a
           v-for="link in links"

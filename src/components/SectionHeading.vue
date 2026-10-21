@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div v-reveal class="grid md:grid-cols-12 gap-4 md:gap-8 mb-8 md:mb-16">
+  <div v-reveal class="grid md:grid-cols-12 gap-4 md:gap-8 mb-6 md:mb-10">
     <div class="md:col-span-3">
       <span class="eyebrow !text-fg">{{ index }} / {{ label }}</span>
     </div>

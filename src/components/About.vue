@@ -34,13 +34,13 @@ import SectionHeading from '@/components/SectionHeading.vue'
 
           <div class="mt-4 sm:mt-6 space-y-4 text-muted text-sm sm:text-base leading-relaxed max-w-2xl">
             <p>
-              My engineering path began in hardware diagnostics, networking, and QA at POSFlow Solutions. Troubleshooting thermal printers, retail LAN/WAN networks, and point-of-sale systems under strict uptime requirements instilled a lasting respect for system resilience and failure recovery.
+              I started in QA and technical support at POSFlow Solutions, keeping retail systems running under strict uptime. That taught me to plan for failure.
             </p>
             <p>
-              At EZZE Technology I moved into backend engineering — building Django REST Framework services, automated Telegram bots, and local Cambodian QR payment integrations on Linux servers.
+              At EZZE Technology I moved into backend work with Django, Telegram bots, and QR payments. As a freelancer I then built full products like ChatEaver, SportPro, and Chessman Topup.
             </p>
             <p>
-              Today, as an independent full-stack engineer, I combine that operational rigor with modern AI workflows — building multi-tenant SaaS platforms like ChatEaver and high-traffic ticketing engines like SportPro.
+              Today I'm an AI Automation Engineer at Twenty Twenty, building AI pipelines that do slow, manual work automatically.
             </p>
           </div>
         </div>

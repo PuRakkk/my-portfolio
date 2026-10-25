@@ -7,6 +7,8 @@ import sportpro640 from '@/assets/images/sportpro_banner-640.webp'
 import sportpro1200 from '@/assets/images/sportpro_banner-1200.webp'
 import cainvite640 from '@/assets/images/cainvite_banner-640.webp'
 import cainvite1200 from '@/assets/images/cainvite_banner-1200.webp'
+import chessman640 from '@/assets/images/chessman_topup_banner-640.webp'
+import chessman1200 from '@/assets/images/chessman_topup_banner-1200.webp'
 import sarakAvatar from '@/assets/images/chon-sarak-360.webp'
 
 interface Project {
@@ -15,7 +17,7 @@ interface Project {
   subtitle: string
   description: string
   highlights: string[]
-  imageKey: 'chateaver' | 'sportpro' | 'chon-sarak' | 'cainvite'
+  imageKey: 'chateaver' | 'sportpro' | 'chon-sarak' | 'cainvite' | 'chessman'
   tags: string[]
   liveUrl?: string
   liveUrlLabel?: string
@@ -39,6 +41,24 @@ const projects: Project[] = [
     tags: ['FastAPI', 'Next.js', 'LlamaIndex', 'pgvector', 'WebSockets', 'Multi-LLM', 'Docker'],
     liveUrl: 'https://chateaver.com',
     liveUrlLabel: 'Visit Live Platform',
+    status: 'live',
+  },
+  {
+    id: 5,
+    title: 'Chessman Topup',
+    subtitle: 'Game Top-Up Store for Cambodia',
+    description: 'An online store where players buy in-game credits, pay with a KHQR code, and get their top-up delivered automatically in seconds.',
+    highlights: [
+      'Secure KHQR payments with ABA PayWay and automatic order delivery',
+      'Safe order handling with no double charges or double deliveries',
+      'Automatic price updates that always keep a minimum profit',
+      'Admin panel and Telegram alerts for the shop owner',
+      'Khmer and English language support'
+    ],
+    imageKey: 'chessman',
+    tags: ['FastAPI', 'Next.js', 'PostgreSQL', 'ABA PayWay', 'Docker', 'Cloudflare'],
+    liveUrl: 'https://chessmantopup.com',
+    liveUrlLabel: 'Visit Live Store',
     status: 'live',
   },
   {
@@ -98,6 +118,7 @@ const banners: Partial<Record<Project['imageKey'], { src: string; srcset: string
   chateaver: { src: chateaver1200, srcset: `${chateaver640} 640w, ${chateaver1200} 1200w` },
   sportpro: { src: sportpro1200, srcset: `${sportpro640} 640w, ${sportpro1200} 1200w` },
   cainvite: { src: cainvite1200, srcset: `${cainvite640} 640w, ${cainvite1200} 1200w` },
+  chessman: { src: chessman1200, srcset: `${chessman640} 640w, ${chessman1200} 1200w` },
 }
 // Card width: ~85vw on phones, ~70vw on small tablets, ~530px on laptop
 const bannerSizes = '(min-width: 768px) 530px, (min-width: 640px) 70vw, 85vw'
@@ -111,7 +132,7 @@ const statusLabel: Record<Project['status'], string> = {
 // Carousel: free scrolling with an endless loop, mouse dragging and a slow ticker-style drift.
 // The list is rendered three times. We keep the view inside the middle copy: whenever it wanders into an
 // outer copy, we jump by exactly one copy's width. All copies are identical, so the jump is invisible.
-const DRIFT_PX_PER_SEC = 35
+const DRIFT_PX_PER_SEC = 55
 const RESUME_DELAY_MS = 1200
 const COPIES = 3
 const n = projects.length

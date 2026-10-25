@@ -9,8 +9,8 @@ const scrollToSection = (href: string) => {
 }
 
 const stats = [
-  { value: '2+', label: 'Years experience' },
-  { value: '4', label: 'Shipped systems' },
+  { value: '3+', label: 'Years experience' },
+  { value: '5', label: 'Shipped systems' },
   { value: '100%', label: 'Delivery rate' },
 ]
 </script>

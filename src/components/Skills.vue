@@ -8,7 +8,7 @@ interface Skill {
 }
 
 interface DomainGroup {
-  id: 'backend' | 'ai' | 'frontend' | 'devops'
+  id: 'backend' | 'payments' | 'ai' | 'frontend' | 'devops'
   title: string
   skills: Skill[]
 }
@@ -37,6 +37,12 @@ const icons: Record<string, string> = {
   send: 'M4 12l16-8-6 16-2-7z',
   shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',
   loop: 'M4 12a8 8 0 0114-5.3L20 9M20 4v5h-5M20 12a8 8 0 01-14 5.3L4 15M4 20v-5h5',
+  qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2M14 18h2v2M18 18h2v2h-2',
+  bank: 'M3 9l9-5 9 5M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 20h18',
+  globe: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z',
+  clock: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v5l3 2',
+  wallet:'M4 7a2 2 0 012-2h12v4M4 7v11a2 2 0 002 2h14V9H6a2 2 0 01-2-2zM16 14.5h1',
+  repeat: 'M17 2l4 4-4 4M3 11V9a3 3 0 013-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 01-3 3H3',
 }
 
 const domains: DomainGroup[] = [
@@ -48,8 +54,20 @@ const domains: DomainGroup[] = [
       { name: 'FastAPI', icon: 'gauge' },
       { name: 'Django & DRF', icon: 'layers' },
       { name: 'PostgreSQL', icon: 'database' },
-      { name: 'Payments', icon: 'card' },
       { name: 'WebSockets & SSE', icon: 'swap' },
+      { name: 'Redis & Background Jobs', icon: 'clock' },
+    ],
+  },
+  {
+    id: 'payments',
+    title: 'Payments',
+    skills: [
+      { name: 'KHQR', icon: 'qr' },
+      { name: 'ABA PayWay', icon: 'card' },
+      { name: 'ACLEDA Bank', icon: 'bank' },
+      { name: 'Stripe', icon: 'globe' },
+      { name: 'PayPal', icon: 'wallet' },
+      { name: 'Lemon Squeezy', icon: 'repeat' },
     ],
   },
   {

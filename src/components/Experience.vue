@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import SectionHeading from '@/components/SectionHeading.vue'
 
 interface ExperienceItem {
@@ -19,13 +19,85 @@ interface ExperienceItem {
 
 const experiences: ExperienceItem[] = [
   {
+    id: 4,
+    company: 'Twenty Twenty',
+    role: 'AI Automation Engineer',
+    period: '2026 — Present',
+    location: 'Remote · Australia',
+    type: 'Full-Time',
+    projects: [
+      {
+        name: 'Presentation Automation',
+        short: 'Presentation Automation',
+        responsibilities: [
+          'Built a pipeline that turns course slides and scripts into narrated videos.',
+          'Matched each part of the script to the right slide automatically.',
+          'Built a 3-layer AI agent system to improve, plan, and produce each video.',
+          'Connected Claude, Gemini, and OpenAI with automatic fallback if one fails.',
+          'Created natural voiceovers with ElevenLabs.',
+          'Rendered 1080p videos with FFmpeg, adding subtitles and background music.',
+          'Added an audio-only podcast version with chapters for listening on the go.',
+          'Built a web studio with FastAPI and live progress updates.'
+        ],
+      },
+      {
+        name: 'RPL Automation (Recognition of Prior Learning)',
+        short: 'RPL Automation',
+        responsibilities: [
+          'Built a Slack bot that creates RPL assessment documents from a course code.',
+          'Collected course details automatically from training.gov.au.',
+          'Integrated the Claude API to write the assessment content for each course unit.',
+          'Added an AI review step that finds problems and sends them back to fix.',
+          'Generated three ready-to-use Word documents for each unit.',
+          'Built it with FastAPI and saved every AI step for easy checking.'
+        ],
+      },
+      {
+        name: 'AI-News Automation',
+        short: 'AI-News Automation',
+        responsibilities: [
+          'Built a daily pipeline that finds AI news and turns it into short videos.',
+          'Checked each story against a second source to confirm it is true.',
+          'Scored stories by how useful they are for business owners.',
+          'Used LLMs to write scripts and fact-check every claim against the source.',
+          'Created AI presenter videos with HeyGen and natural voiceovers with ElevenLabs.',
+          'Added one-click approval in Slack before any video goes live.',
+          'Auto-posted approved videos to Instagram Reels and YouTube Shorts.',
+          'Scheduled daily jobs with Redis and ARQ.'
+        ],
+      },
+      {
+        name: 'Content Migration Automation',
+        short: 'Content Migration',
+        responsibilities: [
+          'Built automated scrapers with Playwright to collect content from old websites.',
+          'Cleaned up messy HTML so the content is clean and ready for the new website.',
+          'Organized and improved the content, then mapped it into structured JSON fields for the new website.',
+          'Used LLMs to rewrite, improve, and check content automatically, which made the migration faster and more reliable.'
+        ],
+      },
+    ],
+  },
+  {
     id: 1,
     company: 'Independent / Freelance',
     role: 'Full-Stack Developer & AI Systems Builder',
-    period: '2025 — Present',
+    period: '2025 — 2026',
     location: 'Phnom Penh, Cambodia',
     type: 'Contract / Client Projects',
     projects: [
+      {
+        name: 'Chessman Topup (Game Top-Up Store)',
+        short: 'Chessman Topup',
+        responsibilities: [
+          'Built an online store where players in Cambodia buy in-game credits.',
+          'Integrated secure KHQR payments with ABA PayWay, so customers scan a QR code to pay and get their top-up delivered automatically.',
+          'Made orders safe: no double charges, no double deliveries, and clear refund handling when something goes wrong.',
+          'Built a price sync that keeps game prices up to date and always protects a minimum profit.',
+          'Added Telegram alerts and an admin panel so the owner can watch orders and fix problems quickly.',
+          'Built the backend with FastAPI and PostgreSQL and the frontend with Next.js, and deployed both with Docker behind Cloudflare.'
+        ],
+      },
       {
         name: 'ChatEaver (Enterprise AI Support Platform)',
         short: 'ChatEaver',
@@ -123,6 +195,31 @@ const nextProject = (exp: ExperienceItem) => {
 }
 
 const pad = (value: number) => String(value).padStart(2, '0')
+
+// Tab rows that scroll sideways (phones): show a fade + arrow while more tabs are hidden to the right
+const tabRows = new Map<number, HTMLElement>()
+const moreTabs = ref<Record<number, boolean>>({})
+const checkTabs = (id: number) => {
+  const el = tabRows.get(id)
+  if (el) moreTabs.value[id] = el.scrollLeft + el.clientWidth < el.scrollWidth - 2
+}
+const setTabRow = (id: number, el: unknown) => {
+  if (el instanceof HTMLElement) tabRows.set(id, el)
+  else tabRows.delete(id)
+}
+const scrollTabs = (id: number) => {
+  const el = tabRows.get(id)
+  el?.scrollBy({ left: el.clientWidth * 0.7, behavior: 'smooth' })
+}
+const checkAllTabs = () => tabRows.forEach((_, id) => checkTabs(id))
+
+onMounted(() => {
+  checkAllTabs()
+  // Fonts swap in after first paint and change tab widths
+  document.fonts?.ready.then(checkAllTabs)
+  window.addEventListener('resize', checkAllTabs, { passive: true })
+})
+onUnmounted(() => window.removeEventListener('resize', checkAllTabs))
 </script>
 
 <template>
@@ -197,14 +294,21 @@ const pad = (value: number) => String(value).padStart(2, '0')
                   <!-- Project tabs: one project's points at a time -->
                   <div v-if="exp.projects">
                     <div class="flex items-end justify-between gap-4 border-b border-line">
-                      <div class="flex gap-4 sm:gap-6" role="tablist">
+                      <div class="relative -mb-px min-w-0">
+                      <!-- Scrolls sideways when the tabs don't fit; overlaps the divider so the active underline sits on it -->
+                      <div
+                        :ref="el => setTabRow(exp.id, el)"
+                        class="no-scrollbar flex gap-4 sm:gap-6 overflow-x-auto pt-1 pr-2"
+                        role="tablist"
+                        @scroll.passive="checkTabs(exp.id)"
+                      >
                         <button
                           v-for="(project, pIdx) in exp.projects"
                           :key="project.name"
                           type="button"
                           role="tab"
                           :aria-selected="current(exp) === pIdx"
-                          class="relative -mb-px pb-2.5 inline-flex items-baseline gap-1.5 text-sm whitespace-nowrap border-b transition-colors"
+                          class="relative shrink-0 pb-2.5 inline-flex items-baseline gap-1.5 text-sm whitespace-nowrap border-b transition-colors"
                           :class="current(exp) === pIdx ? 'text-fg border-fg' : 'text-muted border-transparent hover:text-fg'"
                           @click="selectProject(exp, pIdx)"
                         >
@@ -215,6 +319,20 @@ const pad = (value: number) => String(value).padStart(2, '0')
                             <span class="absolute inline-flex w-full h-full rounded-full bg-accent opacity-60 animate-ping"></span>
                             <span class="relative inline-flex w-1.5 h-1.5 rounded-full bg-accent"></span>
                           </span>
+                        </button>
+                      </div>
+                        <!-- More tabs to the right: fade + arrow, tap to scroll -->
+                        <button
+                          v-if="moreTabs[exp.id]"
+                          type="button"
+                          tabindex="-1"
+                          aria-hidden="true"
+                          class="absolute inset-y-0 right-0 w-12 flex items-center justify-end bg-gradient-to-l from-bg via-bg/90 to-transparent text-muted hover:text-fg"
+                          @click="scrollTabs(exp.id)"
+                        >
+                          <svg class="tabs-hint w-4 h-4 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6l6 6-6 6" />
+                          </svg>
                         </button>
                       </div>
                       <span class="hidden sm:inline pb-2.5 font-mono text-xs text-subtle">
@@ -232,7 +350,7 @@ const pad = (value: number) => String(value).padStart(2, '0')
                         </ul>
 
                         <!-- Next project: makes it obvious there is more to see -->
-                        <div class="mt-6 pt-4 border-t border-line flex items-center justify-between gap-4">
+                        <div v-if="exp.projects.length > 1" class="mt-6 pt-4 border-t border-line flex items-center justify-between gap-4">
                           <span class="font-mono text-xs text-subtle">Project {{ pIdx + 1 }} of {{ exp.projects.length }}</span>
                           <button
                             type="button"
@@ -269,8 +387,18 @@ const pad = (value: number) => String(value).padStart(2, '0')
   from { opacity: 0; transform: translateY(4px); }
 }
 
+/* Gentle nudge on the "more tabs" arrow */
+.tabs-hint {
+  animation: nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  50% { transform: translateX(3px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tab-panel {
+  .tab-panel,
+  .tabs-hint {
     animation: none;
   }
 }

@@ -2,22 +2,6 @@
 import { ref } from 'vue'
 import SectionHeading from '@/components/SectionHeading.vue'
 
-const FORMSPREE_ID = 'maqbkojb'
-
-interface FormData {
-  name: string
-  email: string
-  message: string
-}
-
-const form = ref<FormData>({
-  name: '',
-  email: '',
-  message: '',
-})
-
-const isSubmitting = ref(false)
-const submitStatus = ref<'idle' | 'success' | 'error'>('idle')
 const emailCopied = ref(false)
 
 const copyEmail = async () => {
@@ -30,41 +14,6 @@ const copyEmail = async () => {
   } catch (err) {
     console.error('Failed to copy email', err)
   }
-}
-
-const handleSubmit = async () => {
-  isSubmitting.value = true
-  submitStatus.value = 'idle'
-
-  try {
-    const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        name: form.value.name,
-        email: form.value.email,
-        message: form.value.message
-      })
-    })
-
-    if (response.ok) {
-      form.value = { name: '', email: '', message: '' }
-      submitStatus.value = 'success'
-    } else {
-      submitStatus.value = 'error'
-    }
-  } catch (error) {
-    submitStatus.value = 'error'
-  }
-
-  isSubmitting.value = false
-
-  setTimeout(() => {
-    submitStatus.value = 'idle'
-  }, 6000)
 }
 
 const socialLinks = [
@@ -93,8 +42,8 @@ const socialLinks = [
 
       <div class="grid md:grid-cols-12 gap-12 md:gap-8">
         <!-- Direct Channels -->
-        <div v-reveal="{ delay: 80 }" class="md:col-span-5 md:col-start-4 lg:col-span-4">
-          <dl class="space-y-8">
+        <div v-reveal="{ delay: 80 }" class="md:col-span-9 md:col-start-4">
+          <dl class="grid sm:grid-cols-2 gap-8 sm:gap-x-12">
             <div>
               <dt class="eyebrow">Email</dt>
               <dd class="mt-2 flex flex-wrap items-center gap-3">
@@ -149,72 +98,6 @@ const socialLinks = [
               </dd>
             </div>
           </dl>
-        </div>
-
-        <!-- Form -->
-        <div v-reveal="{ delay: 160 }" class="md:col-span-4 lg:col-span-5">
-          <form @submit.prevent="handleSubmit" class="space-y-5">
-            <div>
-              <label for="name" class="block text-sm font-medium text-fg mb-1.5">Name</label>
-              <input
-                id="name"
-                v-model="form.name"
-                type="text"
-                required
-                autocomplete="name"
-                class="form-field"
-                placeholder="Alex Morgan"
-              />
-            </div>
-
-            <div>
-              <label for="email" class="block text-sm font-medium text-fg mb-1.5">Email</label>
-              <input
-                id="email"
-                v-model="form.email"
-                type="email"
-                required
-                autocomplete="email"
-                class="form-field"
-                placeholder="alex@company.com"
-              />
-            </div>
-
-            <div>
-              <label for="message" class="block text-sm font-medium text-fg mb-1.5">Message</label>
-              <textarea
-                id="message"
-                v-model="form.message"
-                required
-                rows="5"
-                class="form-field resize-none"
-                placeholder="Tell me about your project, timeline, and requirements..."
-              ></textarea>
-            </div>
-
-            <button type="submit" :disabled="isSubmitting" class="btn-primary w-full justify-center disabled:opacity-60">
-              <svg v-if="isSubmitting" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-              </svg>
-              {{ isSubmitting ? 'Sending...' : 'Send message' }}
-            </button>
-
-            <p
-              v-if="submitStatus === 'success'"
-              role="status"
-              class="px-4 py-3 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-sm text-emerald-700 dark:text-emerald-300"
-            >
-              Thanks! Your message has been sent. I'll get back to you soon.
-            </p>
-            <p
-              v-if="submitStatus === 'error'"
-              role="alert"
-              class="px-4 py-3 rounded-md border border-red-500/30 bg-red-500/10 text-sm text-red-700 dark:text-red-300"
-            >
-              Failed to send. Please try again or email sarakchon11@gmail.com directly.
-            </p>
-          </form>
         </div>
       </div>
     </div>

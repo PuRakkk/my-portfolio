@@ -5,7 +5,7 @@ const links = [
   { name: 'Email', href: 'mailto:sarakchon11@gmail.com' },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/in/chon-sarak-b9922836a' },
   { name: 'Telegram', href: 'https://t.me/Sarak_chon' },
-  { name: 'Resume', href: '/CHON-SARAK-2026.pdf' },
+  { name: 'Resume', href: '/CHON_SARAK_CV_2026.pdf' },
 ]
 </script>
 

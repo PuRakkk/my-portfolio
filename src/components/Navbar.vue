@@ -101,7 +101,7 @@ onUnmounted(() => {
         </button>
 
         <a
-          href="/CHON-SARAK-2026.pdf"
+          href="/CHON_SARAK_CV_2026.pdf"
           target="_blank"
           class="hidden sm:inline-flex btn-secondary !px-4 !py-1.5"
         >
@@ -136,7 +136,7 @@ onUnmounted(() => {
         >
           {{ link.name }}
         </a>
-        <a href="/CHON-SARAK-2026.pdf" target="_blank" class="btn-primary justify-center mt-4 mb-2">
+        <a href="/CHON_SARAK_CV_2026.pdf" target="_blank" class="btn-primary justify-center mt-4 mb-2">
           Download Resume
         </a>
       </div>

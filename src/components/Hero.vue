@@ -36,7 +36,7 @@ const stats = [
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6l6 6-6 6" />
           </svg>
         </button>
-        <a href="/CHON-SARAK-2026.pdf" target="_blank" download="CHON-SARAK-2026.pdf" class="btn-secondary">
+        <a href="/CHON_SARAK_CV_2026.pdf" target="_blank" download="CHON_SARAK_CV_2026.pdf" class="btn-secondary">
           Download CV
         </a>
       </div>

@@ -140,14 +140,40 @@ const experiences: ExperienceItem[] = [
     period: '2024 — 2025',
     location: 'Phnom Penh, Cambodia',
     type: 'Full-Time',
-    highlights: [
-      'Engineered high-performance RESTful APIs using Django REST Framework and integrated with Vue.js dashboards.',
-      'Developed and maintained custom Telegram automation bots using Django and FastAPI.',
-      'Integrated local Cambodian payment gateways for instant QR transactions and callback validations.',
-      'Configured production Linux web servers (Apache, Gunicorn, SSL certificates, systemd).',
-      'Designed, normalized, and optimized relational databases across PostgreSQL and MySQL.',
-      'Built a desktop client application in Python for internal administrative operations.',
-      'Maintained rigorous Git version control, branch reviews, and API documentation.'
+    projects: [
+      {
+        name: 'MiniPOS (Telegram Point of Sale)',
+        short: 'MiniPOS',
+        responsibilities: [
+          'Architected a multi-tenant POS backend (Group Company → Company → Branch) with Django REST Framework and PostgreSQL.',
+          'Enforced row-level data isolation with a custom filter backend scoping data to each user\'s company or branches.',
+          'Built dynamic role-based access control mapping HTTP methods to Django model permissions.',
+          'Implemented JWT auth with HttpOnly cookies, token rotation, Telegram PIN login, and brute-force lockouts.',
+          'Designed a user approval workflow that delivers auto-generated credentials through Telegram.',
+          'Built per-company Telegram bots with webhooks auto-updated via Django signals and English / Khmer replies.',
+          'Built transaction APIs with a full status lifecycle, USD / KHR support, and payment status callbacks.',
+          'Integrated ABA PayWay for KHQR transactions with HMAC-SHA512 signed requests and encrypted merchant credentials.',
+          'Delivered daily sales reports by branch and currency through the API and Telegram bot.',
+          'Built inventory for each branch and linked products to every sale.',
+          'Built customer and membership modules with Telegram channel tracking'
+        ],
+      },
+      {
+        name: 'Decoder (AI Document & Code Scanner Bot)',
+        short: 'Decoder',
+        responsibilities: [
+          'Built a three-part system: a FastAPI Telegram bot, a Django REST decoding API, and a Vue.js scanner Mini App.',
+          'Designed a configurable step engine that guides each scan through image, text, and location steps with fallbacks.',
+          'Decoded QR codes and barcodes with pyzbar and OpenCV preprocessing.',
+          'Extracted passport and ID card MRZ data, converting birth and expiry dates into clean fields.',
+          'Read Cambodian GDT VAT TINs from invoices using Google Cloud Vision OCR and Gemini parsing.',
+          'Extracted device IMEIs from labels with Tesseract OCR, regex matching, and barcode fallback.',
+          'Parsed ZTO shipping labels for tracking barcodes and recipient phone numbers.',
+          'Used Gemini 2.0 Flash with task-specific prompts to turn raw OCR text into structured JSON.',
+          'Secured bot webhooks and internal APIs with secret GUIDs, and linked each scan to a user, image, and GPS location.',
+          'Added English / Khmer bot replies, menu commands, contact sharing, and a camera QR scanner'
+        ],
+      },
     ],
   },
   {
@@ -292,7 +318,7 @@ onUnmounted(() => window.removeEventListener('resize', checkAllTabs))
                   </ul>
 
                   <!-- Project tabs: one project's points at a time -->
-                  <div v-if="exp.projects">
+                  <div v-if="exp.projects?.length">
                     <div class="flex items-end justify-between gap-4 border-b border-line">
                       <div class="relative -mb-px min-w-0">
                       <!-- Scrolls sideways when the tabs don't fit; overlaps the divider so the active underline sits on it -->
